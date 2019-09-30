@@ -111,7 +111,7 @@ export default {
                         if(res.data.status === 5){
                             this.$message.success(res.data.tips);
                             localStorage.setItem('token', res.data.token);
-                            this.$router.push('/about');
+                            this.$router.push('/');
                         }else{
                             this.$message.error(res.data.tips);
                         }

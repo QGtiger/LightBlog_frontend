@@ -20,3 +20,10 @@ export const register = (data) => {
         data: qs.stringify(data)
     })
 }
+
+export const islogin = () => {
+    return request({
+        url: '/account/islogin',
+        method: 'get'
+    })
+}

@@ -85,9 +85,13 @@ export default {
                         let data = res.data;
                         console.log(data);
                         if(data.status === 1){
-                            this.$message.success(data.tips);
-                            this.$router.push('/about');
+                            const h = this.$createElement;
+                            this.$notify({
+                            title: '欢迎来到LightBlog',
+                            message: h('i', { style: 'color: teal'}, 'LightBlog是基于Django后端处理，和Vue的前端展示的博客网站，Just for fun.')
+                            });
                             localStorage.setItem('token', data.token)
+                            this.$router.push('/')
                         }else{
                             this.$message.error(data.tips);
                         }

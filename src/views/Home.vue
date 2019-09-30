@@ -7,16 +7,31 @@
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue';
+import {islogin} from '@/api/user';
 
 export default {
   name: 'home',
   components: {
     HelloWorld,
   },
+  mounted() {
+    document.querySelector('body').setAttribute('id', 'background');
+  },
   methods: {
     handleGo() {
-      console.log(213)
-      this.$router.push('/login');
+      islogin().then(res=>{
+        console.log(res)
+        if(res.data.success){
+          const h = this.$createElement;
+          this.$notify({
+            title: '欢迎来到LightBlog',
+            message: h('i', { style: 'color: teal'}, 'LightBlog是基于Django后端处理，和Vue的前端展示的博客网站，Just for fun.')
+          });
+          this.$router.push('/');
+        }else{
+          this.$router.push('/login');
+        }
+      })
     }
   }
 }
@@ -36,4 +51,6 @@ export default {
   transform: translateX(-60px);
   cursor: pointer;
 }
+
+
 </style>

@@ -7,7 +7,7 @@
             <el-submenu class="username-cont" index="3" style="float: right;width: 100px">
                 <template slot="title">
                     <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-                    <span class="username">lightfish</span>
+                    <span class="username">{{userName}}</span>
                 </template>
                 <el-menu-item index="3-1"><i class="el-icon-menu"></i>个人信息</el-menu-item>
                 <el-menu-item index="3-2">完善信息</el-menu-item>
@@ -20,23 +20,35 @@
 </template>
 
 <script>
-
+import {islogin} from '@/api/user'
+import Cookie from 'js-cookie'
 export default {
     name: 'NavMenu',
     components: {},
     data() {
     return {
         activeIndex: '1',
+        userName: ''
     };
     },
     computed: {},
     watch: {},
     mounted() {
+        this.handleGetUserName();
     },
     methods: {
         handleSelect(key, keyPath) {
             console.log(key, keyPath);
+            this.$router.push('/404');
         },
+        handleGetUserName() {
+            islogin().then(res => {
+                if(res.data.success){
+                    this.userName = res.data.username;
+                    Cookie.set('userName', res.data.username);
+                }
+            })
+        }
     },
     created() {
 
@@ -46,14 +58,14 @@ export default {
 </script>
 <style lang='less'>
 //@import url(); 引入公共css类
-.el-menu.el-menu--horizontal {
-    border-bottom: none !important; 
-    background: transparent;
-}
+// .el-menu.el-menu--horizontal {
+//     border-bottom: none !important; 
+//     background: transparent;
+// }
 
-.el-menu--horizontal>.el-menu-item:not(.is-disabled):focus, .el-menu--horizontal>.el-menu-item:not(.is-disabled):hover, .el-menu--horizontal>.el-submenu .el-submenu__title:hover{
-    background-color: transparent !important;
-}
+// .el-menu--horizontal>.el-menu-item:not(.is-disabled):focus, .el-menu--horizontal>.el-menu-item:not(.is-disabled):hover, .el-menu--horizontal>.el-submenu .el-submenu__title:hover{
+//     background-color: transparent !important;
+// }
 
 .username-cont{
     padding-right: 30px;

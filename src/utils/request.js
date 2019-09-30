@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {Message, Loading} from 'element-ui';
+import router from '@/router';
 
 const service = axios.create({
     baseURL: 'http://127.0.0.1:8000',
@@ -40,13 +41,14 @@ service.interceptors.response.use(
   response => {
     endLoading()
     if(response.data.status == 401){
-      Message.error('token值无效，请重新登录')
+      Message.error(response.data.tips)
       // 清除token
       localStorage.removeItem('token')
+      router.push('/login')
     }
     if(response.data.status == 402){
       Message.error(response.data.tips)
-      this.$router.push('/login')
+      router.push('/login')
     }
     return response
   },

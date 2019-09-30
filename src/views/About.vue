@@ -22,10 +22,10 @@
 </template>
 <script>
 import CardBlog from '@/components/blog/CardBlog';
-import request from '@/utils/request'
+import request from '@/utils/request';
 export default {
   components: {
-    CardBlog
+    CardBlog,
   },
   data() {
     return {
@@ -52,7 +52,4 @@ export default {
 }
 </script>
 <style lang="less">
-body{
-  background: url('');
-}
 </style>

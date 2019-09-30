@@ -1,12 +1,15 @@
 <template>
-  <div id="app">
+  <div id="app" v-cloak>
       <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  components: {}
+  components: {},
+  mounted() {
+    
+  }
 }
 </script>
 
@@ -15,23 +18,13 @@ export default {
   padding:0;
   margin: 0;
 }
+
+[v-cloak]{ display:none}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-body{
-  background: url('./assets/images/bg.jpg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center 0;
-  background-repeat: no-repeat;
-  background-size: cover;
-  -webkit-background-size: cover;
-  -o-background-size: cover;
-  zoom: 1;
 }
 #nav {
   padding: 30px;
@@ -42,5 +35,17 @@ body{
       color: #42b983;
     }
   }
+}
+#background{
+  background: url('./assets/images/bg.jpg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -o-background-size: cover;
+  zoom: 1;
 }
 </style>

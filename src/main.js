@@ -21,20 +21,20 @@ Vue.prototype.$ = $;
 
 Vue.config.productionTip = false
 
-// router.beforeEach((to, from, next)=>{
-//   let isLogin = !!localStorage.token
-//   if (to.path === '/login' || to.path === '/register') {
-//     Util.title(to.meta.title);
-//     next()
-//   } else {
-//     Util.title(to.meta.title);
-//     isLogin ? next() : next('/login')
-//   }
-// })
+router.beforeEach((to, from, next)=>{
+  let isLogin = !!localStorage.token
+  if (to.path === '/login' || to.path === '/register' || to.path === '/welcome') {
+    Util.title(to.meta.title);
+    next()
+  } else {
+    Util.title(to.meta.title);
+    isLogin ? next() : next('/login')
+  }
+})
 
-// router.afterEach((to, from, next)=>{
-//   window.scrollTo(0,0);
-// })
+router.afterEach((to, from, next)=>{
+  window.scrollTo(0,0);
+})
 
 new Vue({
   router,

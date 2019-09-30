@@ -17,7 +17,7 @@ export default {
     computed: {},
     watch: {},
     mounted() {
-
+        document.querySelector('body').setAttribute('id', 'background');
     },
     methods: {
 

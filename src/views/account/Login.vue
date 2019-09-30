@@ -13,13 +13,13 @@ export default {
     components: {LoginForm},
     data() {
         return {
-
+            
         };
     },
     computed: {},
     watch: {},
     mounted() {
-
+        document.querySelector('body').setAttribute('id', 'background');
     },
     methods: {
 
