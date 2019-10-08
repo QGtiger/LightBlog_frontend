@@ -1,15 +1,18 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import $ from 'jquery';
 import 'animate.css'
 import {WOW} from 'wowjs';
-import mavonEditor from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
-import Util from './utils/utils'
+import mavonEditor from 'mavon-editor';
+import 'mavon-editor/dist/css/index.css';
+import Util from './utils/utils';
+import Config from './config';
+import '@/assets/css/iconfont.css';
+
 // use
 Vue.use(mavonEditor)
 
@@ -18,6 +21,8 @@ new WOW({live: false}).init();
 
 Vue.use(ElementUI);
 Vue.prototype.$ = $;
+Vue.prototype.$config = Config;
+Vue.prototype.$util = Util;
 
 Vue.config.productionTip = false
 

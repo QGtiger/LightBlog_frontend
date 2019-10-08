@@ -39,7 +39,6 @@ export default {
     methods: {
         handleSelect(key, keyPath) {
             console.log(key, keyPath);
-            this.$router.push('/404');
         },
         handleGetUserName() {
             islogin().then(res => {
@@ -68,7 +67,8 @@ export default {
 // }
 
 .username-cont{
-    padding-right: 30px;
+    padding-right: 60px;
+    width: '';
 }
 
 </style>

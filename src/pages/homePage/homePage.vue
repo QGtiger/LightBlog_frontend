@@ -1,17 +1,26 @@
 <!-- 首页 -->
 <template>
-   <div class='home-page'></div>
+   <div class='home-page'>
+       <div class="flow_blogs">
+           <div class="list-group" v-for="(item, index) in flowBlog" :key="index" >
+                <CardBlog :blog="item"></CardBlog>
+           </div>
+       </div>
+   </div>
 </template>
 
 <script>
 import {getBlogs} from '@/api/blog';
-
+import CardBlog from '@/components/blog/CardBlog';
 
 export default {
-    components: {},
+    components: {
+        CardBlog
+    },
     data() {
         return {
-            currentPage: 1
+            currentPage: 1,
+            flowBlog: [],
         };
     },
     computed: {},
@@ -22,7 +31,8 @@ export default {
     methods: {
         handleGetBlogs(page) {
             getBlogs(page).then(res=>{
-                console.log(res)
+                console.log(res);
+                this.flowBlog = res.data.data;
             })
         }
     },
@@ -35,4 +45,7 @@ export default {
 <style lang='less' scoped>
 //@import url(); 引入公共css类
 
+.flow_blogs .list-group{
+    margin-top: 20px;
+}
 </style>

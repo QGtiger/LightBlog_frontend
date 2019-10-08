@@ -55,18 +55,7 @@ service.interceptors.response.use(
   error => {
     // 错误提醒
     endLoading()
-    console.log(error)
-    Message.error(error.response.data)
-
-    const { status } = error.response
-    if (status === 401) {
-      Message.error('token值无效，请重新登录')
-      // 清除token
-      localStorage.removeItem('token')
-
-      // 页面跳转
-      this.$router.push('/login')
-    }
+    Message.error(error)
 
     return Promise.reject(error)
   }

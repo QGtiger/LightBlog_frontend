@@ -3,37 +3,64 @@
    <div class='blog-card'>
        <el-row :gutter="10">
            <el-col :span="16">
-               <div class="blog-title">测试首页Card</div>
-               <div class="blog-text">实习之路 实习啦，希望再实习期间能把我的这个博客网站成功的向前后端分离进发。前端页面用vue重构下，弄好看点，目标人群要明确点。加油吧 ...</div>
+               <div class="blog-title">
+                   <p class="title">
+                       {{ blog.title }}
+                   </p>
+               </div>
+               <div class="blog-text">
+                   <p class="text">
+                       {{ blog.body }}...
+                   </p>
+               </div>
            </el-col>
            <el-col :span="8">
-                <el-image :src="src"></el-image>
+                <el-image :src="handleGetImg(blog.blog_img_url)"
+                :preview-src-list="Array.of(handleGetImg(blog.blog_img_url))"
+                ></el-image>
            </el-col>
        </el-row>
+       <div class="meta-footer">
+           <div class="article-panel-source">
+               <el-avatar size="small" :src="handleGetAvatorImg(blog.author_img_url)"></el-avatar>
+               &nbsp;&nbsp;{{ blog.author }}
+               <span class="article-status"><i class="iconfont">&#xe600;</i> {{ blog.users_like }}</span>
+                <span class="article-status"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.views }}</span>
+           </div>
+           <div class="time">
+               {{ $util.Time.getFormatTime(blog.updated) }}
+           </div>
+       </div>
    </div>
 </template>
 
 <script>
 
 export default {
-components: {},
-data() {
-   return {
-       src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
-   };
-},
-computed: {},
-watch: {},
-mounted() {
+    props: ['blog'],
+    components: {},
+    data() {
+        return {
+            src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+        };
+    },
+    computed: {},
+    watch: {},
+    mounted() {
 
-},
-methods: {
+    },
+    methods: {
+        handleGetImg(url) {
+            return this.$config.blog_img + url;
+        },
+        handleGetAvatorImg(url){
+            return this.$config.blog_img + url;
+        }
+    },
+    created() {
 
-},
-created() {
-
-},
-activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
+    },
+    activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
 </script>
 <style lang='less' scoped>
@@ -41,7 +68,69 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 .blog-card{
     width: 1000px;
     margin:0 auto;
-    height: 200px;
-    color: #fff;
+    height: 180px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.el-row{
+    overflow: hidden;
+    height: 152px;
+}
+
+.blog-title .title{
+    font-size: 22px;
+    line-height: 24px;
+    font-weight: 700;
+}
+
+.blog-text .text{
+    font-size: 15px;
+    line-height: 24px;
+    margin-top: 5px;
+    word-wrap: break-word;
+    display: block;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 5;
+}
+
+.meta-footer{
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.meta-footer .article-panel-source{
+    display: flex;
+    align-items: center;
+}
+
+.meta-footer .article-panel-source .article-status{
+    margin-left: 10px;
+    font-size: 12px;
+    color: rgb(107, 81, 81);
+}
+
+.meta-footer .time{
+    font-size: 14px;
+}
+
+@media screen and (max-width: 500px){
+    .blog-card{
+        width: 90%;
+        height: 100px;
+    }
+    .el-row{
+        height: 80px;
+    }
+    .blog-text .text{
+        -webkit-line-clamp: 2;
+    }
 }
 </style>
