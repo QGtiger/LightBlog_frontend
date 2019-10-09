@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Layout from './layout/layout.vue';
+import LayoutManage from './layout/backLayout.vue';
 
 Vue.use(Router)
 
@@ -36,7 +37,7 @@ export default new Router({
         path: 'index',
         name: 'index',
         component: () => import('@/pages/homePage/homePage.vue'),
-        meta: {title: '首页'}
+        meta: {title: '首页', index: '1'}
       },{
         path: '404',
         name: '404',
@@ -54,6 +55,18 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: () => import('@/views/account/Register.vue')
+    },
+    {
+      path: '/manage',
+      name: 'manage',
+      component: LayoutManage,
+      redirect: '/manage/index',
+      children: [{
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/manage/welcome'),
+        meta: { title: '欢迎来到后台管理'}
+      }]
     },
     {
       path: '*',

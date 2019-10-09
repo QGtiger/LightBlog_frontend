@@ -2,7 +2,11 @@
 <template>
    <div class='nav-menu'>
        <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-            <el-menu-item index="1">处理中心</el-menu-item>
+            <el-menu-item index="1">
+                <router-link to="/index">
+                    博客首页
+                </router-link>
+            </el-menu-item>
             <el-menu-item index="2">聊天室</el-menu-item>
             <el-submenu class="username-cont" index="3" style="float: right;width: 100px">
                 <template slot="title">
@@ -12,7 +16,12 @@
                 <el-menu-item index="3-1"><i class="el-icon-menu"></i>个人信息</el-menu-item>
                 <el-menu-item index="3-2">完善信息</el-menu-item>
                 <el-menu-item index="3-3">修改密码</el-menu-item>
-                <el-menu-item index="3-4">后台管理</el-menu-item>
+                <router-link to="/manage/index">
+                    <el-menu-item index="3-4">
+                        后台管理
+                    </el-menu-item>
+                </router-link>
+                
                 <el-menu-item index="3-5">退出登录</el-menu-item>
             </el-submenu>
         </el-menu>
@@ -69,6 +78,10 @@ export default {
 .username-cont{
     padding-right: 60px;
     width: '';
+}
+
+a{
+    text-decoration: none;
 }
 
 </style>

@@ -16,16 +16,13 @@
         :ishljs = "true"
       ></mavon-editor>
     </transition>
-    <CardBlog></CardBlog>
   </div>
 </template>
 <script>
-import CardBlog from '@/components/blog/CardBlog';
 import request from '@/utils/request';
 
 export default {
   components: {
-    CardBlog
   },
   data() {
     return {
@@ -42,6 +39,7 @@ export default {
       console.log(pos);
       console.log($file)
       this.img_file[pos] = $file;
+      this.$refs.editor.$img2Url(pos, "http://qnpic.top/yoona2.jpg")
     },
     handleDelImage(pos, $file) {
       console.log(pos, typeof(pos));
