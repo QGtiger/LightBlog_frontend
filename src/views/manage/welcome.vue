@@ -1,14 +1,16 @@
 <!-- 后台管理的欢迎界面 -->
 <template>
    <div class='welcome'>
+      <Title title="总览"></Title>
        <h1>welcome</h1>
    </div>
 </template>
 
 <script>
+import Title from '@/components/title/title'
 
 export default {
-components: {},
+components: {Title},
 data() {
    return {
 

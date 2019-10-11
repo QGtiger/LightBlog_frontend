@@ -66,6 +66,16 @@ export default new Router({
         name: 'index',
         component: () => import('@/views/manage/welcome'),
         meta: { title: '欢迎来到后台管理'}
+      },{
+        path: 'examine',
+        name: 'examine',
+        component: () => import('@/views/manage/articleExamine/article'),
+        meta: { title: '文章审核' }
+      },{
+        path: 'specialcolumn',
+        name: 'specialcolumn',
+        component: () => import('@/views/manage/specialColumn/specialcolumn'),
+        meta: { title: '专栏管理' }
       }]
     },
     {

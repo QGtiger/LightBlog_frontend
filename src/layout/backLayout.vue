@@ -72,7 +72,7 @@ html,body{
     width: 200px;
     height: 100%;
     overflow: hidden;
-    background-color: #f0f0f0;
+    border-right: solid 1px #e6e6e6;
 }
 
 .body-cont {
@@ -82,6 +82,58 @@ html,body{
 .body-cont .container{
     float: left;
     height: 100%;
-    width: calc(100% - 200px);
+    width: calc(100% - 201px);
+}
+
+.main-cont{
+    padding: 0 30px;
+}
+
+// .table {
+//   margin-top: 20px;
+// }
+// .table .el-table {
+//   color: #151515;
+// }
+// .table .el-table thead {
+//   color: #000;
+// }
+// .table .el-table thead tr,
+// .table .el-table thead tr th {
+//   background-color: #f0f0f0;
+// }
+// .table .el-table th,
+// .table .el-table td {
+//   padding: 13px 0;
+// }
+.table .update {
+  color: #0066cc;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.table .up {
+  color: #079c00;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.table .down {
+  cursor: pointer;
+  margin-right: 5px;
+}
+.table .del {
+  color: #bf0000;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.el-pagination {
+  text-align: right;
+}
+.el-pagination__total {
+  float: left;
+}
+a {
+  text-decoration: none;
+  color: #0066cc;
+  cursor: pointer;
 }
 </style>

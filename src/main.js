@@ -12,6 +12,7 @@ import 'mavon-editor/dist/css/index.css';
 import Util from './utils/utils';
 import Config from './config';
 import '@/assets/css/iconfont.css';
+import request from '@/utils/request';
 
 // use
 Vue.use(mavonEditor)
@@ -20,6 +21,7 @@ Vue.use(mavonEditor)
 new WOW({live: false}).init();
 
 Vue.use(ElementUI);
+Vue.prototype.$axios=request;
 Vue.prototype.$ = $;
 Vue.prototype.$config = Config;
 Vue.prototype.$util = Util;

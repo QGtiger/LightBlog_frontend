@@ -46,6 +46,19 @@ util.Time = {
         var day = date.getDate() <10?'0'+date.getDate():date.getDate();
         return date.getFullYear() + "-"+month+"-"+day;
     },
+    //获取包含时分秒的时间格式
+    getAllTime: function (time) {
+        var date = new Date(time);
+        var day = ("0" + date.getDate()).slice(-2);
+        //格式化月，如果小于9，前面补0
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var h = ("0" + date.getHours()).slice(-2) + ':';
+        var m = ("0" + date.getMinutes()).slice(-2) + ':';
+        var s = ("0" + date.getSeconds()).slice(-2);
+        //拼装完整日期格式
+        var today = date.getFullYear() + "-" + month + "-" + day + ' ' + h + m + s;
+        return today
+    },    
     //转换时间
     getFormatTime: function(time){
         var timestamp = time * 1000;

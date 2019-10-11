@@ -26,7 +26,7 @@ export default {
     computed: {},
     watch: {},
     mounted() {
-        this.handleGetBlogs(this.currentPage)
+        this.handleGetBlogs(this.currentPage);
     },
     methods: {
         handleGetBlogs(page) {

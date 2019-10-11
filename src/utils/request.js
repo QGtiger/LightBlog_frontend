@@ -1,6 +1,7 @@
 import axios from 'axios'
 import {Message, Loading} from 'element-ui';
 import router from '@/router';
+import qs from 'qs'
 
 const service = axios.create({
     baseURL: 'http://127.0.0.1:8000',
@@ -28,7 +29,7 @@ service.interceptors.request.use(
     startLoading()
     if (localStorage.token) {
       config.headers.Authorization = localStorage.token
-    }
+    }  
     return config
   },
   error => {
@@ -50,7 +51,11 @@ service.interceptors.response.use(
       Message.error(response.data.tips)
       router.push('/login')
     }
-    return response
+    if(response.data.success){
+      return response;
+    }else{
+      Message.error(response.data.tips)
+    }
   },
   error => {
     // 错误提醒
