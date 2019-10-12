@@ -76,6 +76,11 @@ export default new Router({
         name: 'specialcolumn',
         component: () => import('@/views/manage/specialColumn/specialcolumn'),
         meta: { title: '专栏管理' }
+      },{
+        path: 'addSpecialColumn',
+        name: 'addSpecialColumn',
+        component: () => import('@/views/manage/specialColumn/addcolumn'),
+        meta: { title: '新增专栏' }
       }]
     },
     {

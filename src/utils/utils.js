@@ -48,7 +48,7 @@ util.Time = {
     },
     //获取包含时分秒的时间格式
     getAllTime: function (time) {
-        var date = new Date(time);
+        var date = new Date(time*1000);
         var day = ("0" + date.getDate()).slice(-2);
         //格式化月，如果小于9，前面补0
         var month = ("0" + (date.getMonth() + 1)).slice(-2);

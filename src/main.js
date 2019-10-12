@@ -13,6 +13,8 @@ import Util from './utils/utils';
 import Config from './config';
 import '@/assets/css/iconfont.css';
 import request from '@/utils/request';
+import {VueCropper} from 'vue-cropper';
+Vue.use(VueCropper)
 
 // use
 Vue.use(mavonEditor)

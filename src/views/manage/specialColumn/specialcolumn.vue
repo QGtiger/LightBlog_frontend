@@ -24,6 +24,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="description" label="专栏简介" ></el-table-column>
+                <el-table-column label="操作">
+                    <template v-slot="scope">
+                        <div>
+                            <span class="update">编辑</span>
+                            <span class="del" @click="handleDelSpecialColumn(scope.row.id,scope.row.specialColumn)">删除</span>
+                        </div>
+                    </template>
+                </el-table-column>
            </el-table>
             <el-pagination
               :current-page.sync="currentPage"
@@ -38,7 +46,7 @@
             title="添加文章专栏"
             :visible.sync="dialogShowAddSpecial"
             :before-close="handleCancelAddSpecial"
-            width="30%"
+            width="40%"
             center
         >
             <el-form :model="dialogAddSpecialForm" ref="dialogAddSpecialForm" label-width="80px" :rules="rules">
@@ -47,6 +55,23 @@
                 </el-form-item>
                 <el-form-item prop="description" label="简介">
                     <el-input type="textarea" v-model="dialogAddSpecialForm.description"></el-input>                    
+                </el-form-item>
+                <el-form-item label="封面">
+                    <el-upload
+                        :class="{disabled: showUploadBtn}"
+                        action
+                        list-type="picture-card"
+                        :on-preview="handlePictureCardPreview"
+                        :on-remove="handleRemove"
+                        :auto-upload="false"
+                        :on-change="handleUploadImage"
+                        :file-list="showImage"
+                    >
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogImage" :append-to-body="true">
+                        <img width="100%" :src="dialogImageUrl" alt="logo" />
+                    </el-dialog>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleAddSpecialColumn">提交</el-button>
@@ -58,11 +83,14 @@
 </template>
 
 <script>
-import Title from '@/components/title/title'
+import {VueCropper} from 'vue-cropper'
+import Title from '@/components/title/title';
+import qs from 'qs';
 
 export default {
     components: {
-        Title
+        Title,
+        VueCropper
     },
     data() {
         return {
@@ -81,7 +109,12 @@ export default {
             dialogAddSpecialForm: {
                 columnName: '',
                 description: '',
-            }
+                coverImage: ''
+            },
+            showUploadBtn: false,
+            dialogImageUrl: '',
+            dialogImage: false,
+            showImage: [],
         };
     },
     computed: {},
@@ -97,7 +130,6 @@ export default {
             this.$axios.get('/article/api/get/special_column').then(res=>{
                 this.specialColumnList = res.data.data;
                 this.total = res.data.total;
-                console.log(this.specialColumnList)
             })
         },
         handleCancelAddSpecial(){
@@ -112,25 +144,64 @@ export default {
             this.dialogShowAddSpecial = true;
         },
         handleAddSpecialColumn() {
-            console.log(this.dialogAddSpecialForm)
-            const formData = new FormData();
-            const loginData = this.dialogAddSpecialForm;
-            Object.keys(loginData).forEach((key) => {
-                formData.append(key, loginData[key]);
-            });
-            console.log(formData);
-            this.$axios.post('/article/api/add/special_column', 
-                formData
-            ).then(res=> {
-                this.$message.success(res.data.tips)
-                this.dialogShowAddSpecial = false;
-                this.dialogAddSpecialForm= {
-                    columnName: '',
-                    description: '',
+            this.$refs.dialogAddSpecialForm.validate((valid) => {
+                if(valid){
+                    const formData = new FormData();
+                    const loginData = this.dialogAddSpecialForm;
+                    Object.keys(loginData).forEach((key) => {
+                        formData.append(key, loginData[key]);
+                    });
+                    this.$axios.post('/article/api/add/special_column', 
+                        formData
+                    ).then(res=> {
+                        this.$message.success(res.data.tips)
+                        this.dialogShowAddSpecial = false;
+                        this.dialogAddSpecialForm= {
+                            columnName: '',
+                            description: '',
+                        }
+                        this.handleGetSpecialColumnList();
+                    })
+                }else{
+                    this.$message.warning('请认真填写')
                 }
-                this.handleGetSpecialColumnList();
             })
-        }
+        },
+        handleDelSpecialColumn(id, columnName) {
+            this.$confirm("是否删除专栏 -- "+columnName, "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                cancelButtonClass: "el-button--danger",
+                type: "warning",
+                center: true
+            }).then(() => {
+                this.$axios.post('/article/api/del/special_column',
+                    qs.stringify({columnId: id})
+                ).then(res=>{
+                    this.$message.success(res.data.tips);
+                    this.handleGetSpecialColumnList();
+                })
+            }).catch(() => {
+
+            })
+        },
+        handleUploadImage(file, fileList){
+            console.log(file)
+            this.showUploadBtn = true;
+            const isLt5M = file.size / 1024 / 1024 < 5;
+            if (!isLt5M) {
+                this.$message.error('上传文件大小不能超过 5MB!')
+                return false
+            }
+        },
+        handlePictureCardPreview(file){
+            // console.log(file)
+            this.dialogImageUrl = file.url;
+            this.dialogImage = true;
+        },
+        handleRemove(file, fileList){
+           this.showUploadBtn = false;
+        },
     }
 }
 </script>
@@ -145,4 +216,7 @@ export default {
     }
 }
 
+.disabled .el-upload--picture-card{
+    display: none;
+}
 </style>

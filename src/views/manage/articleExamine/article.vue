@@ -63,7 +63,7 @@ export default {
     methods: {
         handleGetSpecialColumnList() {
             this.$axios.get('/article/api/get/special_column').then(res=>{
-                console.log(res)
+                this.specialColumnList = res.data.data;
             })
         }
     },

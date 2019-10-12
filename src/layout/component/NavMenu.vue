@@ -51,10 +51,8 @@ export default {
         },
         handleGetUserName() {
             islogin().then(res => {
-                if(res.data.success){
-                    this.userName = res.data.username;
-                    Cookie.set('userName', res.data.username);
-                }
+                this.userName = res.data.username;
+                Cookie.set('userName', res.data.username);
             })
         }
     },
