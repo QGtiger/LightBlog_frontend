@@ -10,6 +10,27 @@
             <el-form-item prop="description" label="简介">
                 <el-input type="textarea" v-model="specialColumnForm.description"></el-input>                    
             </el-form-item>
+            <el-form-item label="封面" prop="coverUrl">
+                <el-upload
+                    :class="{disabled: showUploadBtn}"
+                    action
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :auto-upload="false"
+                    :on-change="handleUploadImage"
+                    :file-list="specialColumnForm.coverUrl"
+                >
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogImage" :append-to-body="true">
+                    <img width="100%" :src="dialogImageUrl" alt="logo" />
+                </el-dialog>                
+            </el-form-item>
+            <el-form-item>
+                <el-button type='primary' @click="hanldSubmit">提交</el-button>
+                <el-button>取消</el-button>
+            </el-form-item>
         </el-form>
     </div>
     <el-dialog
@@ -37,32 +58,14 @@
                     <div class="radius-preview" v-html="previews.html"></div>
                 </div>
             </div>
-            <label class="btn" for="upload">上传</label>
+            <!-- <label class="btn" for="upload">上传</label>
             <input type="file" id="upload" style="position:absolute; clip:rect(0 0 0 0);"
-                accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event,2)">
-            <button @click="finish2()" class="btn">裁剪</button>
+                accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event,2)"> -->
+            <button @click="handleCropperImage" class="btn">裁剪</button>
         </div>
     </el-dialog>
-<div class="content">
 
-    <div class="show-info">
-    <div class="test">
-        <vueCropper ref="cropper" :img="cropper.img " :outputSize="cropper.size" :outputType="cropper.outputType"
-        :info="cropper.info" :canScale="cropper.canScale" :autoCrop="cropper.autoCrop"
-        :autoCropWidth="cropper.autoCropWidth" :autoCropHeight="cropper.autoCropHeight" :fixed="cropper.fixed"
-        :fixedNumber="cropper.fixedNumber" :enlarge="4" @realTime="realTime"></vueCropper>
-    </div>
-    <label class="btn" for="upload">上传</label>
-    <input type="file" id="upload" style="position:absolute; clip:rect(0 0 0 0);"
-        accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event,2)">
-    <button @click="test" class="btn">裁剪</button>
-    </div>
-</div>
 
-<div class="preview-image">
-    <!-- <img :src="previews.url" :style="previews.img"> -->
-    <div v-html="previews.html"></div>
-</div>
     </div>
 </template>
  
@@ -76,44 +79,50 @@ export default {
     },
     data() {
         return {
-        crap: false,
-        previews: {
-            div: {
-                html: ''
-            }
-        },
-        cropper: {
-            //img的路径自行修改
-            img: '',
-            info: true,
-            size: 1,
-            outputType: 'jpeg',
-            canScale: true,
-            autoCrop: true,
-            // 只有自动截图开启 宽度高度才生效
-            autoCropWidth: 168,
-            autoCropHeight: 168,
-            fixed: true,
-            // 真实的输出宽高
-            infoTrue: true,
-            fixedNumber: [4, 4]
-        },
-        downImg: '#',
+            crap: false,
+            previews: {
+                div: {
+                    html: ''
+                }
+            },
+            cropper: {
+                //img的路径自行修改
+                img: '',
+                info: true,
+                size: 1,
+                outputType: 'jpeg',
+                canScale: true,
+                autoCrop: true,
+                // 只有自动截图开启 宽度高度才生效
+                autoCropWidth: 168,
+                autoCropHeight: 168,
+                fixed: true,
+                // 真实的输出宽高
+                infoTrue: true,
+                fixedNumber: [4, 4]
+            },
+            downImg: '#',
 
-        rules: {
-            columnName: [
-                { required: true, message: '请输入专栏名称', trigger: 'blur' }
-            ],
-            description: [
-                { required: true, message: '请输入专栏简介', trigger: 'blur' }
-            ]
-        },
-        specialColumnForm: {
-            columnName: '',
-            description: '',
-
-        },
-        dialogEditImage: false,
+            rules: {
+                columnName: [
+                    { required: true, message: '请输入专栏名称', trigger: 'blur' }
+                ],
+                description: [
+                    { required: true, message: '请输入专栏简介', trigger: 'blur' }
+                ],
+                coverUrl: [
+                    { required: true, message: '请上传封面', trigger: 'blur' }
+                ]
+            },
+            specialColumnForm: {
+                columnName: '',
+                description: '',
+                coverUrl: []
+            },
+            dialogEditImage: false,
+            showUploadBtn: false,
+            dialogImageUrl: '',
+            dialogImage: false,
         }
     },
     methods: {
@@ -169,6 +178,7 @@ export default {
             } else {
                 data = e.target.result
             }
+            console.log(data)
             this.cropper.img = data
             
         }
@@ -178,9 +188,8 @@ export default {
         reader.readAsArrayBuffer(file)
         },
         // base64转blob
-        toBlob(ndata) {
+        handleToBlob(ndata) {
             //ndata为base64格式地址
-            console.log(ndata)
             let arr = ndata.split(','),
                 mime = arr[0].match(/:(.*?);/)[1],
                 bstr = atob(arr[1]),
@@ -200,10 +209,63 @@ export default {
         },
         handleCancelEdit() { //放弃编辑图片
             this.dialogEditImage = false;
-            this.cropper.img = null;
+            // this.cropper.img = null;
         },
-        test(){
+        handlePictureCardPreview(file){
+            this.dialogImageUrl = file.url;
+            this.dialogImage = true;
+        },
+        handleRemove(file, fileList){
+           this.showUploadBtn = false;
+        },
+        handleUploadImage(file) {
+            console.log(file)
+            this.showUploadBtn = true;
             this.dialogEditImage = true;
+            this.cropper.img = file.url;
+        },
+        handleCropperImage() {
+            this.$refs.cropper.getCropData((data) => {
+                //裁剪后的图片显示
+                if (typeof data === 'object') {
+                // 把Array Buffer转化为blob 如果是base64不需要
+                    data = window.URL.createObjectURL(new Blob([data]))
+                }
+                this.specialColumnForm.coverUrl.splice(0,1,{
+                    url: data
+                })
+                this.dialogEditImage =false;
+            })      
+        },
+        hanldSubmit() {
+            this.$refs.specialColumnForm.validate((valid) => {
+                if(valid){
+                    console.log(this.specialColumnForm)
+                    const formData = new FormData();
+                    const postData = {
+                        columnName: this.specialColumnForm.columnName,
+                        description: this.specialColumnForm.description,
+                        cover_image: this.handleToBlob(this.specialColumnForm.coverUrl[0].url)
+                    }
+                    Object.keys(postData).forEach((key) => {
+                        formData.append(key, postData[key]);
+                    });
+                    this.$axios.post('/article/api/add/special_column', 
+                        formData
+                    ).then(res=> {
+                        this.$message.success(res.data.tips)
+                        this.dialogShowAddSpecial = false;
+                        this.dialogAddSpecialForm= {
+                            columnName: '',
+                            description: '',
+                            coverUrl: []
+                        }
+                        this.$router.back();
+                    })                    
+                }else{
+                    this.$message.warning('请认真填写')
+                }
+            })
         }
     },
 
@@ -286,7 +348,9 @@ export default {
      background-color: #eeeeee;
  }
 
- 
+ .add-column-cont .disabled .el-upload--picture-card{
+    display: none;
+}
 
  
 

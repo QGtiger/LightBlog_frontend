@@ -4,7 +4,7 @@
        <Title title="专栏管理"></Title>
        <div class="search-cont">
            <div>
-               <el-button type="primary" @click="handleShowDialogAddSpecial">增加专栏</el-button>
+               <el-button type="primary" @click="handleJumpAddSpecialColumn">增加专栏</el-button>
            </div>
        </div>
        <div class="table">
@@ -202,6 +202,10 @@ export default {
         handleRemove(file, fileList){
            this.showUploadBtn = false;
         },
+
+        handleJumpAddSpecialColumn(){
+            this.$router.push('/manage/addspecialcolumn');
+        }
     }
 }
 </script>
