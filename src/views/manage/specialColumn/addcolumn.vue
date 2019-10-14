@@ -29,7 +29,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button type='primary' @click="hanldSubmit">提交</el-button>
-                <el-button>取消</el-button>
+                <el-button @click="handleJumpBack">取消</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -72,6 +72,7 @@
 <script>
   import { VueCropper } from 'vue-cropper'
   import Title from '@/components/title/title'
+  import qs from 'qs';
 export default {
     components: {
         VueCropper,
@@ -123,7 +124,12 @@ export default {
             showUploadBtn: false,
             dialogImageUrl: '',
             dialogImage: false,
+            id: '',
         }
+    },
+    mounted() {
+        this.id = this.$route.query.id === undefined ? '' : this.$route.query.id;
+        this.$route.query.id === undefined ? '' : this.handleGetColumnData();
     },
     methods: {
         //点击裁剪，这一步是可以拿到处理后的地址
@@ -134,28 +140,6 @@ export default {
             this.model = false;
             //裁剪后的图片显示
             this.cropper.img = this.modelSrc;
-            // this.toBlob(data)
-            // console.log(data)
-            // console.log(this.toBlob(data))
-
-        //   //阿里云处理图片，项目的接口，这里可以不用，上面的地址打印即为base64的地址
-        //   this.$api.admin.url(data => {
-        //     new OSS.Wrapper({
-        //       region: "oss-cn-hangzhou",
-        //       accessKeyId: data.accessKeyId,
-        //       accessKeySecret: data.accessKeySecret,
-        //       stsToken: data.securityToken,
-        //       // bucket: 'mybg'c
-        //       bucket: 'zhiyuan-hz'
-        //     })
-        //       .put(data.key, this.toBlob(this.cropper.img))
-        //       .then(data => {
-        //       console.log(data.url)
-        //       })
-        //       .catch(function (err) {
-        //         console.error("error: %j", err);
-        //       });
-        //   });
         })
 
         },
@@ -266,6 +250,23 @@ export default {
                     this.$message.warning('请认真填写')
                 }
             })
+        },
+        handleGetColumnData() {
+            this.$axios.post('/article/api/detail/special_column', 
+                qs.stringify({columnId: this.id})
+            ).then(res=>{
+                this.specialColumnForm={
+                    columnName: res.data.data.special_column,
+                    description: res.data.data.description,
+                    coverUrl: [{
+                        url: 'http://127.0.0.1:8000'+res.data.data.previewImg
+                    }]
+                }
+                this.showUploadBtn = true;       
+            })
+        },
+        handleJumpBack() {
+            this.$router.back();
         }
     },
 

@@ -71,16 +71,28 @@ export default new Router({
         name: 'examine',
         component: () => import('@/views/manage/articleExamine/article'),
         meta: { title: '文章审核' }
-      },{
-        path: 'specialcolumn',
-        name: 'specialcolumn',
+      }]
+    },
+    {
+      path: '/specialcolumn',
+      name: 'specialcolumn',
+      component: LayoutManage,
+      redirect: '/specialcolumn/index',
+      children: [{
+        path: 'index',
+        name: 'index',
         component: () => import('@/views/manage/specialColumn/specialcolumn'),
         meta: { title: '专栏管理' }
       },{
-        path: 'addSpecialColumn',
-        name: 'addSpecialColumn',
+        path: 'add',
+        name: 'add',
         component: () => import('@/views/manage/specialColumn/addcolumn'),
         meta: { title: '新增专栏' }
+      },{
+        path: 'update',
+        name: 'update',
+        component: () => import('@/views/manage/specialColumn/addcolumn'),
+        meta: { title: '编辑专栏' }
       }]
     },
     {

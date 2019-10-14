@@ -27,7 +27,7 @@
                 <el-table-column label="操作">
                     <template v-slot="scope">
                         <div>
-                            <span class="update">编辑</span>
+                            <span class="update" @click="handleJumpUpdateSpecialColumn(scope.row.id)">编辑</span>
                             <span class="del" @click="handleDelSpecialColumn(scope.row.id,scope.row.specialColumn)">删除</span>
                         </div>
                     </template>
@@ -42,7 +42,7 @@
               :hide-on-single-page="true"
             ></el-pagination>             
        </div>
-        <el-dialog
+        <!-- <el-dialog
             title="添加文章专栏"
             :visible.sync="dialogShowAddSpecial"
             :before-close="handleCancelAddSpecial"
@@ -78,7 +78,7 @@
                     <el-button @click="handleCancelAddSpecial">取消</el-button>
                 </el-form-item>
             </el-form>
-        </el-dialog>
+        </el-dialog> -->
    </div>
 </template>
 
@@ -204,7 +204,15 @@ export default {
         },
 
         handleJumpAddSpecialColumn(){
-            this.$router.push('/manage/addspecialcolumn');
+            this.$router.push('/specialcolumn/add');
+        },
+        handleJumpUpdateSpecialColumn(id){
+            this.$router.push({
+                path: '/specialcolumn/update',
+                query: {
+                    id
+                }
+            })
         }
     }
 }

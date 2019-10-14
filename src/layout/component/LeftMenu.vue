@@ -13,7 +13,7 @@
             <el-menu-item><i class="el-icon-edit"></i> 文章审核</el-menu-item>
           </router-link>
       </el-submenu>
-      <router-link to="/manage/specialcolumn">
+      <router-link to="/specialcolumn/index">
         <el-menu-item>
           <i class="el-icon-menu"></i>
           <span slot="title">专栏管理</span>

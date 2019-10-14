@@ -10,7 +10,7 @@ module.exports = {
       port: 8080, // 服务端口
       https: false,
       hotOnly: false,
-      proxy: null, // 设置代理
+      proxy: 'http://127.0.0.1:8000', // 设置代理
       before: app => {}
   },
   configureWebpack: {
