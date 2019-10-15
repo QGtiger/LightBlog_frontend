@@ -96,6 +96,23 @@ export default new Router({
       }]
     },
     {
+      path: '/specialtheme',
+      name: 'specialtheme',
+      component: LayoutManage,
+      redirect: '/specialtheme/index',
+      children:[{
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/manage/specialTheme/specialtheme'),
+        meta: { title: '专题管理' }
+      },{
+        path: 'add',
+        name: 'add',
+        component: () => import('@/views/manage/specialTheme/addtheme'),
+        meta: { title: '新增专题' }
+      }]
+    },
+    {
       path: '*',
       redirect: '/404'
     }

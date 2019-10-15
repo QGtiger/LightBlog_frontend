@@ -3,12 +3,22 @@
 <div class="add-column-cont">
     <Title :title="title"></Title>
     <div class="form-cont">
-        <el-form :model="specialColumnForm" ref="specialColumnForm" label-width="100px" :rules="rules" label-position="left">
-            <el-form-item prop="columnName" label="专栏名称">
-                <el-input v-model="specialColumnForm.columnName" placeholder="请填写专栏名称"></el-input>
+        <el-form :model="specialThemeForm" ref="specialThemeForm" label-width="100px" :rules="rules" label-position="left">
+            <el-form-item prop="themeName" label="专题名称">
+                <el-input v-model="specialThemeForm.themeName" placeholder="请填写专题名称"></el-input>
             </el-form-item>
+            <el-form-item label="所属专栏: " prop="columnId">
+                <el-select v-model="specialThemeForm.columnId" placeholder="请选择专栏">
+                    <el-option
+                    v-for="(item, index) in specialColumnList"
+                    :key="index"
+                    :label="item.specialColumn"
+                    :value="item.id"
+                    ></el-option>
+                </el-select>
+            </el-form-item>            
             <el-form-item prop="description" label="简介">
-                <el-input type="textarea" v-model="specialColumnForm.description"></el-input>                    
+                <el-input type="textarea" v-model="specialThemeForm.description"></el-input>                    
             </el-form-item>
             <el-form-item label="封面" prop="coverUrl">
                 <el-upload
@@ -19,7 +29,7 @@
                     :on-remove="handleRemove"
                     :auto-upload="false"
                     :on-change="handleUploadImage"
-                    :file-list="specialColumnForm.coverUrl"
+                    :file-list="specialThemeForm.coverUrl"
                 >
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -34,7 +44,7 @@
         </el-form>
     </div>
     <el-dialog
-        title="专栏标题"
+        title="专题标题"
         :visible.sync="dialogEditImage"
         :before-close="handleCancelEdit"
         width="868px"
@@ -105,20 +115,25 @@ export default {
             downImg: '#',
 
             rules: {
-                columnName: [
-                    { required: true, message: '请输入专栏名称', trigger: 'blur' }
+                themeName: [
+                    { required: true, message: '请输入专题名称', trigger: 'blur' }
                 ],
                 description: [
-                    { required: true, message: '请输入专栏简介', trigger: 'blur' }
+                    { required: true, message: '请输入专题简介', trigger: 'blur' }
                 ],
                 coverUrl: [
                     { required: true, message: '请上传封面', trigger: 'blur' }
+                ],
+                columnId: [
+                    { required: true, message: '请选择专栏', trigger: 'blur' }
                 ]
             },
-            specialColumnForm: {
-                columnName: '',
+            specialColumnList: [], //专栏 list
+            specialThemeForm: {
+                themeName: '',
                 description: '',
-                coverUrl: []
+                coverUrl: [],
+                columnId: ''
             },
             dialogEditImage: false,
             showUploadBtn: false,
@@ -131,26 +146,26 @@ export default {
     },
     computed: {
         title() {
-            return this.isUpdate ? '编辑专栏' : '新增专栏';
+            return this.isUpdate ? '编辑专题' : '新增专题';
         }
     },
     mounted() {
+        this.handleGetSpecialColumnList();
         this.id = this.$route.query.id === undefined ? '' : this.$route.query.id;
         this.$route.query.id === undefined ? '' : this.handleGetColumnData();
     },
     methods: {
         //点击裁剪，这一步是可以拿到处理后的地址
         finish2() {
-        this.$refs.cropper.getCropData((data) => {
-            this.modelSrc = data
-            console.log(data)
-            this.model = false;
-            //裁剪后的图片显示
-            this.cropper.img = this.modelSrc;
-        })
+            this.$refs.cropper.getCropData((data) => {
+                this.modelSrc = data
+                console.log(data)
+                this.model = false;
+                //裁剪后的图片显示
+                this.cropper.img = this.modelSrc;
+            })
 
         },
-
         uploadImg(e, num) {
         //上传图片
         this.cropper.img = ''
@@ -194,9 +209,19 @@ export default {
             })
         },
         realTime(data){
-        this.previews = {
-            ...data
-        }
+            this.previews = {
+                ...data
+            }
+        },
+        handleGetSpecialColumnList() { //获取专题list
+            this.$axios.get('/article/api/get/special_column').then(res=>{
+                this.specialColumnList = res.data.data;
+            })
+        },
+        handleGetSpecialColumnList() { //获取专栏list
+            this.$axios.get('/article/api/get/special_column').then(res=>{
+                this.specialColumnList = res.data.data;
+            })
         },
         handleCancelEdit() { //放弃编辑图片
             this.dialogEditImage = false;
@@ -208,7 +233,7 @@ export default {
         },
         handleRemove(file, fileList){
            this.showUploadBtn = false;
-           this.specialColumnForm.coverUrl = [];
+           this.specialThemeForm.coverUrl = [];
         },
         handleUploadImage(file) {
             console.log(file)
@@ -224,14 +249,14 @@ export default {
                 // 把Array Buffer转化为blob 如果是base64不需要
                     data = window.URL.createObjectURL(new Blob([data]))
                 }
-                this.specialColumnForm.coverUrl.splice(0,1,{
+                this.specialThemeForm.coverUrl.splice(0,1,{
                     url: data
                 })
                 this.dialogEditImage =false;
             })      
         },
         hanldSubmit() {
-            this.$refs.specialColumnForm.validate((valid) => {
+            this.$refs.specialThemeForm.validate((valid) => {
                 if(valid){
                     if(this.isUpdate){
                         let coverImageBlob = this.isUpdateImage ? this.handleToBlob(this.specialColumnForm.coverUrl[0].url) : '';
@@ -261,21 +286,23 @@ export default {
                     }else{
                         const formData = new FormData();
                         const postData = {
-                            columnName: this.specialColumnForm.columnName,
-                            description: this.specialColumnForm.description,
-                            cover_image: this.handleToBlob(this.specialColumnForm.coverUrl[0].url)
+                            columnId: this.specialThemeForm.columnId,
+                            themeName: this.specialThemeForm.themeName,
+                            description: this.specialThemeForm.description,
+                            cover_image: this.handleToBlob(this.specialThemeForm.coverUrl[0].url)
                         }
                         Object.keys(postData).forEach((key) => {
                             formData.append(key, postData[key]);
                         });
-                        this.$axios.post('/article/api/add/special_column', 
+                        this.$axios.post('/article/api/add/special_theme', 
                             formData
                         ).then(res=> {
                             this.$message.success(res.data.tips)
                             this.specialColumnForm= {
-                                columnName: '',
+                                themeName: '',
                                 description: '',
-                                coverUrl: []
+                                coverUrl: [],
+                                columnId: ''
                             }
                             this.$router.back();
                         }) 

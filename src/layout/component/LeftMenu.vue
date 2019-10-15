@@ -6,19 +6,25 @@
       >
       <el-submenu index="1">
         <template slot="title">
-          <i class="el-icon-document"></i>
+          <i class="iconfont">&#xe856;</i>
           <span>审核管理</span>
         </template>
           <router-link to="/manage/examine">
             <el-menu-item><i class="el-icon-edit"></i> 文章审核</el-menu-item>
           </router-link>
       </el-submenu>
-      <router-link to="/specialcolumn/index">
-        <el-menu-item>
-          <i class="el-icon-menu"></i>
-          <span slot="title">专栏管理</span>
-        </el-menu-item>      
-      </router-link>
+      <el-submenu index="2">
+        <template slot="title">
+          <i class="iconfont">&#xe830;</i>
+          <span>文章栏目管理</span>
+        </template>
+          <router-link to="/specialcolumn/index">
+            <el-menu-item><i class="iconfont">&#xe846;</i> 专栏管理</el-menu-item>
+          </router-link>
+          <router-link to="/specialtheme/index">
+            <el-menu-item><i class="iconfont">&#xe834;</i> 专题管理</el-menu-item>
+          </router-link>          
+      </el-submenu>      
       <el-menu-item>
         <i class="el-icon-tickets"></i>
         <span slot="title">个人栏目管理</span>
