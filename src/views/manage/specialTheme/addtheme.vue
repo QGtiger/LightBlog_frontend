@@ -152,7 +152,7 @@ export default {
     mounted() {
         this.handleGetSpecialColumnList();
         this.id = this.$route.query.id === undefined ? '' : this.$route.query.id;
-        this.$route.query.id === undefined ? '' : this.handleGetColumnData();
+        this.$route.query.id === undefined ? '' : this.handleGetThemeData();
     },
     methods: {
         //点击裁剪，这一步是可以拿到处理后的地址
@@ -259,29 +259,26 @@ export default {
             this.$refs.specialThemeForm.validate((valid) => {
                 if(valid){
                     if(this.isUpdate){
-                        let coverImageBlob = this.isUpdateImage ? this.handleToBlob(this.specialColumnForm.coverUrl[0].url) : '';
+                        let coverImageBlob = this.isUpdateImage === 1 ? this.handleToBlob(this.specialThemeForm.coverUrl[0].url) : '';
                         const formData = new FormData();
                         const postData = {
-                                columnId: this.id,
-                                description: this.specialColumnForm.description,
-                                columnName: this.specialColumnForm.columnName,
+                                themeId: this.id,
+                                description: this.specialThemeForm.description,
+                                themeName: this.specialThemeForm.themeName,
+                                columnId: this.specialThemeForm.columnId,
                                 isUpdateImage: this.isUpdateImage,
                                 cover_image: coverImageBlob
                             }
                         Object.keys(postData).forEach((key) => {
                             formData.append(key, postData[key]);
                         });
-                        this.$axios.post('/article/api/update/special_column',
+                        this.$axios.post('/article/api/update/special_theme',
                             formData
                         ).then(res=>{
-                            console.log(res.data);
-                            this.$message.success(res.data.tips)
-                            this.specialColumnForm= {
-                                columnName: '',
-                                description: '',
-                                coverUrl: []
+                            if(res){
+                                this.$message.success(res.data.tips)
+                                this.$router.back();
                             }
-                            this.$router.back();
                         })
                     }else{
                         const formData = new FormData();
@@ -297,13 +294,7 @@ export default {
                         this.$axios.post('/article/api/add/special_theme', 
                             formData
                         ).then(res=> {
-                            this.$message.success(res.data.tips)
-                            this.specialColumnForm= {
-                                themeName: '',
-                                description: '',
-                                coverUrl: [],
-                                columnId: ''
-                            }
+                            this.$message.success(res.data.tips);
                             this.$router.back();
                         }) 
                     }                
@@ -312,14 +303,15 @@ export default {
                 }
             })
         },
-        handleGetColumnData() {
+        handleGetThemeData() {
             this.isUpdate = true;
-            this.$axios.post('/article/api/detail/special_column', 
-                qs.stringify({columnId: this.id})
+            this.$axios.post('/article/api/detail/special_theme', 
+                qs.stringify({themeId: this.id})
             ).then(res=>{
-                this.specialColumnForm={
-                    columnName: res.data.data.special_column,
+                this.specialThemeForm={
+                    themeName: res.data.data.special_theme,
                     description: res.data.data.description,
+                    columnId: res.data.data.special_columnId,
                     coverUrl: [{
                         url: 'http://127.0.0.1:8000'+res.data.data.previewImg
                     }]

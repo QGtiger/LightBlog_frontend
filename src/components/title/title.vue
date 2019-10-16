@@ -1,6 +1,8 @@
 <!-- 挑剔 -->
 <template>
    <div class='title-cont'>
+       <span class="back" v-if="back"><i class="iconfont" @click="goBack">&#xe636;</i></span>
+       <span class="title-border" v-else></span>
        <span class="title-text">{{ title }}</span>
    </div>
 </template>
@@ -9,7 +11,7 @@
 
 export default {
     name: 'Title',
-    props: ['title'],
+    props: ['title', 'back'],
     components: {},
     data() {
         return {
@@ -22,7 +24,9 @@ export default {
 
     },
     methods: {
-
+        goBack() {
+            this.$router.back();
+        }
     }
 }
 </script>
@@ -41,7 +45,21 @@ export default {
     line-height: 60px;
 }
 
-.title-text::before{
+.title-cont .back{
+    display: inline-block;
+}
+
+.title-cont .back .iconfont{
+    font-size: 30px !important;
+    cursor: pointer;
+    color: #bf0000;
+}
+
+.title-cont .title-text{
+    padding-left: 20px;
+}
+
+.title-border::before{
     content: '';
     display: inline-block;
     width: 4px;

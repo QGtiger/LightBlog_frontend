@@ -55,7 +55,7 @@ service.interceptors.response.use(
       return response;
     }else{
       Message.error(response.data.tips)
-      
+      return false;
     }
   },
   error => {

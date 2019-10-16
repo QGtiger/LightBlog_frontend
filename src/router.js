@@ -110,6 +110,11 @@ export default new Router({
         name: 'add',
         component: () => import('@/views/manage/specialTheme/addtheme'),
         meta: { title: '新增专题' }
+      },{
+        path: 'update',
+        name: 'update',
+        component: () => import('@/views/manage/specialTheme/addtheme'),
+        meta: { title: '编辑专题' }
       }]
     },
     {
