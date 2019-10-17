@@ -1,7 +1,7 @@
 <!-- 裁剪图片 -->
 <template>
 <div class="add-column-cont">
-    <Title :title="title"></Title>
+    <Title :title="title" :back="true"></Title>
     <div class="form-cont">
         <el-form :model="specialColumnForm" ref="specialColumnForm" label-width="100px" :rules="rules" label-position="left">
             <el-form-item prop="columnName" label="专栏名称">

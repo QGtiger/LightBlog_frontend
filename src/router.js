@@ -118,6 +118,40 @@ export default new Router({
       }]
     },
     {
+      path: '/personalcolumn',
+      name: 'personalcolumn',
+      component: LayoutManage,
+      redirect: '/personalcolumn/index',
+      children: [{
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/manage/personalColumn/personalColumn'),
+        meta: { title: '个人专栏' }
+      },{
+        path: 'add',
+        name: 'add',
+        component: () => import('@/views/manage/personalColumn/addUpdateColumn'),
+        meta: { title: '新增个人专栏' }
+      },{
+        path: 'update',
+        name: 'update',
+        component: () => import('@/views/manage/personalColumn/addUpdateColumn'),
+        meta: { title: '编辑个人专栏' }
+      }]
+    },
+    {
+      path:'/article',
+      name: 'article',
+      component: LayoutManage,
+      redirect: '/article/index',
+      children: [{
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/manage/article/articleList'),
+        meta: { title: '文章列表' }
+      }]
+    },
+    {
       path: '*',
       redirect: '/404'
     }

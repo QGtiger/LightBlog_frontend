@@ -1,7 +1,7 @@
 <!-- 裁剪图片 -->
 <template>
 <div class="add-column-cont">
-    <Title :title="title"></Title>
+    <Title :title="title" :back="true"></Title>
     <div class="form-cont">
         <el-form :model="specialThemeForm" ref="specialThemeForm" label-width="100px" :rules="rules" label-position="left">
             <el-form-item prop="themeName" label="专题名称">
@@ -213,13 +213,12 @@ export default {
                 ...data
             }
         },
-        handleGetSpecialColumnList() { //获取专题list
-            this.$axios.get('/article/api/get/special_column').then(res=>{
-                this.specialColumnList = res.data.data;
-            })
-        },
         handleGetSpecialColumnList() { //获取专栏list
-            this.$axios.get('/article/api/get/special_column').then(res=>{
+            this.$axios.post('/article/api/get/special_column', 
+                qs.stringify({
+                    status: 1
+                })
+            ).then(res=>{
                 this.specialColumnList = res.data.data;
             })
         },
@@ -294,8 +293,10 @@ export default {
                         this.$axios.post('/article/api/add/special_theme', 
                             formData
                         ).then(res=> {
-                            this.$message.success(res.data.tips);
-                            this.$router.back();
+                            if(res){
+                                this.$message.success(res.data.tips);
+                                this.$router.back();
+                            }
                         }) 
                     }                
                 }else{

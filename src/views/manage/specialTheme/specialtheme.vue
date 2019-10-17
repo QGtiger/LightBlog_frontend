@@ -1,7 +1,7 @@
 <!-- 专栏模块 -->
 <template>
    <div class='special-column-cont'>
-       <Title title="专题管理" :back="true"></Title>
+       <Title title="专题管理"></Title>
        <div class="search-cont">
            <div class="status-cont">
                <span :class="{'active': status === ''}" class="status-change" @click="handleChangeStatus('')">全部状态</span>
@@ -12,7 +12,7 @@
            </div>
            <div class="searchForm">
                <el-form :model="searchForm" :inline="true">
-                   <el-form-item label="状态:">
+                   <el-form-item label="专栏:">
                        <el-select v-model="searchForm.columnId">
                         <el-option label="全部" value=""></el-option>
                         <el-option 
@@ -28,11 +28,9 @@
                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="handleSearchTheme">搜索</el-button>
+                        <el-button type="warning" @click="handleJumpAddSpecialTheme">增加专题</el-button>
                     </el-form-item>
                </el-form>
-           </div>
-           <div>
-               <el-button type="primary" @click="handleJumpAddSpecialTheme">增加专题</el-button>
            </div>
        </div>
        <div class="table">
@@ -133,8 +131,10 @@ export default {
                     content: this.searchForm.content
                     })
             ).then(res=>{
-                this.specialThemeList = res.data.data;
-                this.total = res.data.total;
+                if(res){
+                    this.specialThemeList = res.data.data;
+                    this.total = res.data.total;
+                }
             })
         },
         handleDelSpecialTheme(id, themeName) {
@@ -156,7 +156,11 @@ export default {
             })
         },
         handleGetSpecialColumnList() { //获取专栏 LIST
-            this.$axios.get('/article/api/get/special_column').then(res=>{
+            this.$axios.post('/article/api/get/special_column',
+                qs.stringify({
+                    status: 1
+                })
+            ).then(res=>{
                 this.columnList = res.data.data;
             })
         },
@@ -176,7 +180,6 @@ export default {
             this.$confirm('确定发布 《'+name+'》 ?','提示',{
                 confirmButtonText: '确认',
                 cancelButtonText: '取消',
-                cancelButtonClass: 'el-button-danger',
                 center: true,
                 type: 'warning'
             }).then(() => {

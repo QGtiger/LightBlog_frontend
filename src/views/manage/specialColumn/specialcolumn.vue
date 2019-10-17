@@ -3,8 +3,15 @@
    <div class='special-column-cont'>
        <Title title="专栏管理"></Title>
        <div class="search-cont">
+           <div class="status-cont">
+               <span :class="{'active': status === ''}" class="status-change" @click="handleChangeStatus('')">全部状态</span>
+               <span class="space">/</span>
+               <span :class="{'active': status === 1}" class="status-change" @click="handleChangeStatus(1)">已发布</span>
+               <span class="space">/</span>
+               <span :class="{'active': status === 0}" class="status-change" @click="handleChangeStatus(0)">未发布</span>
+           </div>
            <div>
-               <el-button type="primary" @click="handleJumpAddSpecialColumn">增加专栏</el-button>
+               <el-button type="warning" @click="handleJumpAddSpecialColumn">增加专栏</el-button>
            </div>
        </div>
        <div class="table">
@@ -24,10 +31,19 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="description" label="专栏简介" ></el-table-column>
+                <el-table-column label="状态">
+                    <template v-slot="scope">
+                        <div>
+                            {{ scope.row.status === 1 ? '已发布' : '未发布' }}
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作">
                     <template v-slot="scope">
                         <div>
                             <span class="update" @click="handleJumpUpdateSpecialColumn(scope.row.id)">编辑</span>
+                            <span class="up" v-if="scope.row.status === 0" @click="handleUpColumn(scope.row.id,scope.row.specialColumn )">发布</span>
+                            <span class="down" v-else @click="handleDownColumn(scope.row.id, scope.row.specialColumn)">下架</span>
                             <span class="del" @click="handleDelSpecialColumn(scope.row.id,scope.row.specialColumn)">删除</span>
                         </div>
                     </template>
@@ -39,7 +55,6 @@
               :page-size="10"
               layout="total, prev, pager, next"
               :total="total"
-              :hide-on-single-page="true"
             ></el-pagination>             
        </div>
         <!-- <el-dialog
@@ -115,6 +130,7 @@ export default {
             dialogImageUrl: '',
             dialogImage: false,
             showImage: [],
+            status: '', //专栏状态
         };
     },
     computed: {},
@@ -127,7 +143,11 @@ export default {
             return (index+1) + (this.currentPage-1)*10;
         },
         handleGetSpecialColumnList() {
-            this.$axios.get('/article/api/get/special_column').then(res=>{
+            this.$axios.post('/article/api/get/special_column',
+                qs.stringify({
+                    status: this.status
+                })
+            ).then(res=>{
                 this.specialColumnList = res.data.data;
                 this.total = res.data.total;
             })
@@ -168,7 +188,7 @@ export default {
             })
         },
         handleDelSpecialColumn(id, columnName) {
-            this.$confirm("是否删除专栏 -- "+columnName, "提示", {
+            this.$confirm("是否删除专栏 -- 《"+columnName+"》", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 cancelButtonClass: "el-button--danger",
@@ -180,6 +200,48 @@ export default {
                 ).then(res=>{
                     this.$message.success(res.data.tips);
                     this.handleGetSpecialColumnList();
+                })
+            }).catch(() => {
+
+            })
+        },
+        handleUpColumn(id, columnName) { //发布专栏
+            this.$confirm("是否发布专栏 -- 《"+columnName+"》", '提示', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+                center: true
+            }).then(() => {
+                this.$axios.post('/article/api/publish/special_column',
+                    qs.stringify({
+                        columnId: id
+                    })
+                ).then(res=>{
+                    if(res){
+                        this.$message.success('发布成功');
+                        this.handleGetSpecialColumnList();
+                    }
+                })
+            }).catch(() => {
+
+            })
+        },
+        handleDownColumn(id, columnName) { //下架专栏
+            this.$confirm("是否下架专栏 -- 《"+columnName+"》", '提示', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+                center: true
+            }).then(() => {
+                this.$axios.post('/article/api/down/special_column',
+                    qs.stringify({
+                        columnId: id
+                    })
+                ).then(res=>{
+                    if(res){
+                        this.$message.success('下架成功');
+                        this.handleGetSpecialColumnList();
+                    }
                 })
             }).catch(() => {
 
@@ -213,6 +275,10 @@ export default {
                     id
                 }
             })
+        },
+        handleChangeStatus(status){
+            this.status = status;
+            this.handleGetSpecialColumnList()
         }
     }
 }
@@ -222,9 +288,18 @@ export default {
 
 .special-column-cont .search-cont{
     overflow: hidden;
-    div{
-        float: right;
-        padding-right: 50px;
+    .status-cont{
+        padding: 10px 0 20px;
+        .space{
+            margin: 0 20px;
+        }
+        .status-change{
+            cursor: pointer;
+        }
+        .active{
+            color: #0066cc;
+            font-weight: 700;
+        }
     }
 }
 

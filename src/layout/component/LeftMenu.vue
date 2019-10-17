@@ -16,7 +16,7 @@
       <el-submenu index="2">
         <template slot="title">
           <i class="iconfont">&#xe830;</i>
-          <span>文章栏目管理</span>
+          <span>文章管理</span>
         </template>
           <router-link to="/specialcolumn/index">
             <el-menu-item><i class="iconfont">&#xe846;</i> 专栏管理</el-menu-item>
@@ -25,14 +25,18 @@
             <el-menu-item><i class="iconfont">&#xe834;</i> 专题管理</el-menu-item>
           </router-link>          
       </el-submenu>      
-      <el-menu-item>
-        <i class="el-icon-tickets"></i>
-        <span slot="title">个人栏目管理</span>
-      </el-menu-item>
-      <el-menu-item>
-        <i class="el-icon-date"></i>
-        <span slot="title">文章列表</span>
-      </el-menu-item>    
+      <router-link to="/personalcolumn/index">
+        <el-menu-item>
+          <i class="el-icon-tickets"></i>
+          <span slot="title">个人栏目管理</span>
+        </el-menu-item>
+      </router-link>
+      <router-link to="/article/index">
+        <el-menu-item>
+          <i class="el-icon-date"></i>
+          <span slot="title">文章列表</span>
+        </el-menu-item> 
+      </router-link>   
       <el-menu-item>
         <i class="el-icon-upload"></i>
         <span slot="title">文章发布</span>
