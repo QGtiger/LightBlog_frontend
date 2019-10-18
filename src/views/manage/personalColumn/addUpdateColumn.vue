@@ -251,7 +251,7 @@ export default {
                         columnName: res.data.data.columnName,
                         description: res.data.data.description,
                         previewImg: [{
-                            url: 'http://127.0.0.1:8000'+res.data.data.previewImg
+                            url: res.data.data.previewImg
                         }]
                     }
                     this.showUploadBtn = true;  

@@ -44,7 +44,7 @@
         </el-form>
     </div>
     <el-dialog
-        title="专题标题"
+        title="专题封面裁剪"
         :visible.sync="dialogEditImage"
         :before-close="handleCancelEdit"
         width="868px"
@@ -314,7 +314,7 @@ export default {
                     description: res.data.data.description,
                     columnId: res.data.data.special_columnId,
                     coverUrl: [{
-                        url: 'http://127.0.0.1:8000'+res.data.data.previewImg
+                        url: res.data.data.previewImg
                     }]
                 }
                 this.showUploadBtn = true;       

@@ -149,6 +149,11 @@ export default new Router({
         name: 'index',
         component: () => import('@/views/manage/article/articleList'),
         meta: { title: '文章列表' }
+      },{
+        path: 'add',
+        name: 'add',
+        component: () => import('@/views/manage/article/addUpdateArticle'),
+        meta: { title: '新增文章' }
       }]
     },
     {

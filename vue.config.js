@@ -10,7 +10,16 @@ module.exports = {
       port: 8080, // 服务端口
       https: false,
       hotOnly: false,
-      proxy: 'http://127.0.0.1:8000', // 设置代理
+      proxy: {
+        '/media': {//代理api
+            target: "http://localhost:8000",//服务器api地址
+            changeOrigin: true,//是否跨域
+            ws: false, // proxy websockets
+            pathRewrite: {//重写路径
+                "^/admin": ''
+              }
+          }
+      },
       before: app => {}
   },
   configureWebpack: {

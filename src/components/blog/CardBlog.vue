@@ -15,14 +15,14 @@
                </div>
            </el-col>
            <el-col :span="8">
-                <el-image :src="handleGetImg(blog.blog_img_url)"
-                :preview-src-list="Array.of(handleGetImg(blog.blog_img_url))"
+                <el-image :src="blog.blog_img_url"
+                :preview-src-list="Array.of(blog.blog_img_url)"
                 ></el-image>
            </el-col>
        </el-row>
        <div class="meta-footer">
            <div class="article-panel-source">
-               <el-avatar size="small" :src="handleGetAvatorImg(blog.author_img_url)"></el-avatar>
+               <el-avatar size="small" :src="blog.author_img_url"></el-avatar>
                &nbsp;&nbsp;{{ blog.author }}
                <span class="article-status"><i class="iconfont">&#xe600;</i> {{ blog.users_like }}</span>
                 <span class="article-status"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.views }}</span>
