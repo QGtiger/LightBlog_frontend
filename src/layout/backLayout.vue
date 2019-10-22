@@ -136,4 +136,8 @@ a {
   color: #0066cc;
   cursor: pointer;
 }
+
+.el-dialog{
+    min-width: 500px;
+}
 </style>

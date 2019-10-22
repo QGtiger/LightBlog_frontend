@@ -76,6 +76,11 @@ export default new Router({
         name: 'check',
         component: () => import('@/views/manage/articleExamine/articleCheck'),
         meta: { title: '文章审核' }
+      },{
+        path: 'template',
+        name: 'template',
+        component: () => import('@/views/manage/articleExamine/replayTemplate'),
+        meta: { title: '回复模板' }
       }]
     },
     {

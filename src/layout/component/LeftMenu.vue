@@ -12,6 +12,9 @@
           <router-link to="/manage/examine">
             <el-menu-item><i class="el-icon-edit"></i> 文章审核</el-menu-item>
           </router-link>
+          <router-link to="/manage/template">
+            <el-menu-item><i class="el-icon-edit"></i>回复模板</el-menu-item>
+          </router-link>
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
