@@ -59,10 +59,11 @@ export default {
             articleForm: {
                 title: '',
                 description: '',
-                previewImg: [],
+                previewImg: [{url:''}],
                 columnName: '',
                 themeName: '',
-                body: ''
+                body: '',
+                bodyHtml: ''
             },
         };
     },

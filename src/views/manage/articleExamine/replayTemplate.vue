@@ -41,6 +41,13 @@
             </el-form-item>
         </el-form>
        </el-dialog>
+       <el-pagination
+            :current-page.sync="currentPage"
+            @current-change="handleGetTemplateList"
+            :page-size="size"
+            :total="total"
+            layout="total, prev, pager, next"
+           ></el-pagination>
    </div>
 </template>
 
@@ -220,5 +227,9 @@ export default {
 </script>
 <style lang='less'>
 //@import url(); 引入公共css类
-
+.reply-template{
+    .template-cont{
+        margin-top: 30px;
+    }
+}
 </style>
