@@ -45,7 +45,11 @@
                <el-table-column label="状态">
                    <template v-slot="scope">
                        <div>
-                           <span>{{  handleStatusText(scope.row.status) }}</span>
+                           <!-- <span>{{  handleStatusText(scope.row.status) }}</span> -->
+                           <span class="local" v-if="scope.row.status == 0">未发布</span>
+                           <span class="waiting" v-if="scope.row.status == 1">待处理</span>
+                           <span class="reject" v-if="scope.row.status == 2">已驳回</span>
+                           <span class="adopt" v-if="scope.row.status == 3">已通过</span>
                        </div>
                    </template>
                </el-table-column>
@@ -56,18 +60,26 @@
                    <template v-slot="scope">
                        <div>
                            <span class="update" @click="handleJumpUpdate(scope.row.id)">编辑</span>
-                           <span class="up" v-if="scope.row.status === 0" @click="handleUpArticle(scope.row.id, scope.row.title)">发布</span>
+                           <span class="up" v-if="scope.row.status === 0 || scope.row.status === 2" @click="handleUpArticle(scope.row.id, scope.row.title)">申请发布</span>
+                           <span class="del" @click="handleDelArticle(scope.row.id, scope.row.title)">删除</span>
                        </div>
                    </template>
                </el-table-column>
            </el-table>
+           <el-pagination
+            :current-page.sync="currentPage"
+            @current-change="handleGetArticleList"
+            :page-size="size"
+            :total="total"
+            layout="total, prev, pager, next"
+           ></el-pagination>
        </div>
    </div>
 </template>
 
 <script>
 import Title from '@/components/title/title';
-import { stat } from 'fs';
+import qs from 'qs'
 export default {
     components: {
         Title
@@ -96,11 +108,19 @@ export default {
             return index + 1 + (this.currentPage - 1)*this.size;
         },
         handleJumpUpdate(id){ //跳转到编辑页面
-
+            this.$router.push({
+                path:'update',
+                query: {
+                    id
+                }
+            })
         },
         handleGetArticleList() { //获取文章
             this.$axios.post('/article/api/get/articlelist?page='+this.currentPage+'&size='+this.size).then(res=>{
-                this.articleList = res.data.data;
+                if(res){
+                    this.articleList = res.data.data;
+                    this.total = res.data.total;
+                }
             })
         },
         handleStatusText(status){
@@ -128,7 +148,17 @@ export default {
                 center: 'true',
                 type: 'warning'
             }).then(() => {
-
+                console.log(123)
+                this.$axios.post('/article/api/apply/article',
+                    qs.stringify({
+                        id
+                    })
+                ).then(res=>{
+                    if(res){
+                        this.$message.success('申请已发布，等到管理员处理');
+                        this.handleGetArticleList();
+                    }
+                })
             }).catch(() => {
 
             })
@@ -137,6 +167,27 @@ export default {
             this.$router.push({
                 path: 'add'
             })
+        },
+        handleDelArticle(id, title){
+            this.$confirm('确定删除 -- 《'+title+'》 ? ', '注意', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                center: 'true',
+                type: 'warning'
+            }).then(() => {
+                this.$axios.post('/article/api/del/article',
+                    qs.stringify({
+                        id
+                    })
+                ).then(res=>{
+                    if(res){
+                        this.$message.success('删除成功');
+                        this.handleGetArticleList();
+                    }
+                })
+            }).catch(() => {
+
+            })
         }
     },
     created() {
@@ -144,8 +195,22 @@ export default {
     },
 }
 </script>
-<style>
+<style lang="less">
 .is-recommend{
     color: #bf0000;
+}
+
+.article-list-cont{
+    .table-cont{
+        .waiting{
+            color:#0066cc;
+        }
+        .reject{
+            color: #bf0000;
+        }
+        .adopt{
+            color:chartreuse;
+        }
+    }
 }
 </style>

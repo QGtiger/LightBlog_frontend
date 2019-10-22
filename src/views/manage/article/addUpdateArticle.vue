@@ -29,7 +29,7 @@
                         </el-dialog>                
                     </el-form-item>
                     <el-form-item label="所属专栏" prop="columnId">
-                        <el-select v-model="articleForm.columnId">
+                        <el-select v-model="articleForm.columnId" @change="handleChangeColumn">
                             <el-option
                                 v-for="item in columnList"
                                 :key="item.id"
@@ -61,7 +61,7 @@
                </el-form>
            </div>
            <div class="mavon-editor">
-               <mavon-editor style="min-height:600px" v-model="articleForm.body" ref="editor"></mavon-editor>
+               <mavon-editor v-if="isUpdate" style="min-height:600px" v-model="articleForm.body" ref="editor" @imgAdd="handleAddImg" @imgDel="handleDelImage" @save="handleSave"></mavon-editor>
                <div class="meta-footer">
                    <el-button type="primary" @click="handlePublishArticle">确认</el-button>
                    <el-button @click="handleCancelPublishArticle">取消</el-button>
@@ -115,7 +115,7 @@ export default {
     },
     data() {
         var checkTitleName = (rule, value, callback) => {
-            if(!value){
+            if(value.replace(/(^\s*)|(\s*$)/g, "").length === 0){
                 return callback(new Error('标题不能为空'));
             }
             setTimeout(()=>{
@@ -221,6 +221,9 @@ export default {
     mounted() {
         this.handleGetColumnTheme();
         this.handleGetColumnList();
+        this.updateId = this.$route.query.id === undefined ? '' : this.$route.query.id;
+        this.isUpdate = this.$route.query.id === undefined ? false : true;
+        this.$route.query.id === undefined ? '' : this.handleGetArticleDetail();
     },
     methods: {
         handlePictureCardPreview(file) {
@@ -260,7 +263,7 @@ export default {
             })
         },
         handleCropperImage() { //裁剪后的图片
-            this.isUpdateImage = 1;
+            this.isUpdateImg = 1;
             this.$refs.cropper.getCropData((data) => {
                 this.articleForm.previewImg.splice(0,1,{
                     url: data
@@ -270,8 +273,10 @@ export default {
         },
         handleGetColumnTheme(){
             this.$axios.post('/article/api/get/columnTheme').then(res=>{
-                this.columnList = res.data.data.columnList;
-                this.themeList = res.data.data.themeList;
+                if(res){
+                    this.columnList = res.data.data.columnList;
+                    this.themeList = res.data.data.themeList;
+                }
             })
         },
         handleGetColumnList() {
@@ -283,24 +288,47 @@ export default {
             })
         },
         handlePublishArticle(){ //发布文章
-            console.log(this.articleForm)
+            // console.log(this.articleForm)
             this.$refs.articleForm.validate(valid => {
                 if(valid){
                     if(this.isUpdate){
-
-                    }else{
                         if(this.$refs.editor.d_render === ''){
                             this.$message.warning('文章正文不能为空哦~~');
                             return;
                         }
                         const formData = new FormData();
+                        let coverImageBlob = this.isUpdateImg === 1 ? this.handleToBlob(this.articleForm.previewImg[0].url) : '';
                         const postData = {
-                            title: this.articleForm.title,
+                            id: this.updateId,
+                            title: this.articleForm.title.replace(/(^\s*)|(\s*$)/g, ""),
                             description: this.articleForm.description,
                             specialColumnId: this.articleForm.columnId,
                             specialThemeId: this.articleForm.themeId,
                             personalColumnId: this.articleForm.personalColumnId,
                             body: this.articleForm.body,
+                            body_html: this.$refs.editor.d_render,
+                            isUpdateImg: this.isUpdateImg,
+                            previewImg: coverImageBlob
+                        }
+                        Object.keys(postData).forEach((key) => {
+                            formData.append(key, postData[key]);
+                        });
+                        this.$axios.post('/article/api/update/article',
+                            formData
+                        ).then(res => {
+                            if(res){
+                                this.$message.success('发布成功');
+                                this.$router.back();
+                            }
+                        })
+                    }else{
+                        const formData = new FormData();
+                        const postData = {
+                            title: this.articleForm.title.replace(/(^\s*)|(\s*$)/g, ""),
+                            description: this.articleForm.description,
+                            specialColumnId: this.articleForm.columnId,
+                            specialThemeId: this.articleForm.themeId,
+                            personalColumnId: this.articleForm.personalColumnId,
                             isUpdateImg: this.isUpdateImg,
                             previewImg: this.handleToBlob(this.articleForm.previewImg[0].url)
                         }
@@ -311,8 +339,12 @@ export default {
                         this.$axios.post('/article/api/publish/article',
                             formData
                         ).then(res => {
-                            this.$message.success('发布成功');
-                            this.$router.back();
+                            if(res){
+                                this.$message.success('发布成功');
+                                this.isUpdate = true;
+                                this.updateId = res.data.data.id;
+                                this.isUpdateImg = 0;
+                            }
                         })
                     }
                 }else{
@@ -322,8 +354,82 @@ export default {
         },
         handleCancelPublishArticle() { //取消
             this.$router.back();
+        },
+        handleGetArticleDetail() {
+            this.$axios.post('/article/api/detail/article', 
+                qs.stringify({
+                    id: this.updateId
+                })
+            ).then(res => {
+                this.articleForm = res.data.data;
+                this.showUploadBtn = true;  
+            })
+        },
+        handleAddImg(pos, $file){ //图片上传
+            // if($file.size > 1024*1024*2){
+            //     this.$message.warning('图片大小不能大于2MB');
+            //     return;
+            // }
+            let formData = new FormData();
+            let postData = {
+                id: this.updateId,
+                imageName: $file.name.split('.').join(`-${pos}.`),
+                image: this.handleToBlob($file.miniurl)
+            }
+            console.log(postData)
+            Object.keys(postData).forEach((key) => {
+                formData.append(key, postData[key]);
+            });
+            this.$axios.post('/article/api/upload/image',
+                formData
+            ).then(res => {
+                this.$refs.editor.$img2Url(pos, res.data.data.imageCompress)
+            })
+            // this.$refs.editor.$img2Url(pos, "http://qnpic.top/yoona2.jpg")
+        },
+        handleDelImage(pos, $file) { //图片删除
+        },
+        handleSave(){ //文章保存上传
+            this.$refs.articleForm.validate(valid => {
+                if(valid){
+                    if(this.isUpdate){
+                        if(this.$refs.editor.d_render === ''){
+                            this.$message.warning('文章正文不能为空哦~~');
+                            return;
+                        }
+                        const formData = new FormData();
+                        let coverImageBlob = this.isUpdateImg === 1 ? this.handleToBlob(this.articleForm.previewImg[0].url) : '';
+                        const postData = {
+                            id: this.updateId,
+                            title: this.articleForm.title.replace(/(^\s*)|(\s*$)/g, ""),
+                            description: this.articleForm.description,
+                            specialColumnId: this.articleForm.columnId,
+                            specialThemeId: this.articleForm.themeId,
+                            personalColumnId: this.articleForm.personalColumnId,
+                            body: this.articleForm.body,
+                            body_html: this.$refs.editor.d_render,
+                            isUpdateImg: this.isUpdateImg,
+                            previewImg: coverImageBlob
+                        }
+                        Object.keys(postData).forEach((key) => {
+                            formData.append(key, postData[key]);
+                        });
+                        this.$axios.post('/article/api/update/article',
+                            formData
+                        ).then(res => {
+                            if(res){
+                                this.$message.success('保存成功');
+                            }
+                        })
+                    }
+                }else{
+                    this.$message.warning('请认真填写')
+                }
+            })
+        },
+        handleChangeColumn(){ //切换专栏，专题为空
+            this.articleForm.themeId = '';
         }
-        
     },
     created() {
 

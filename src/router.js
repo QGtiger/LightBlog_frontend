@@ -71,6 +71,11 @@ export default new Router({
         name: 'examine',
         component: () => import('@/views/manage/articleExamine/article'),
         meta: { title: '文章审核' }
+      },{
+        path: 'check',
+        name: 'check',
+        component: () => import('@/views/manage/articleExamine/articleCheck'),
+        meta: { title: '文章审核' }
       }]
     },
     {
@@ -154,6 +159,11 @@ export default new Router({
         name: 'add',
         component: () => import('@/views/manage/article/addUpdateArticle'),
         meta: { title: '新增文章' }
+      }, {
+        path: 'update',
+        name: 'update',
+        component: () => import('@/views/manage/article/addUpdateArticle'),
+        meta: { title: '编辑文章' }
       }]
     },
     {

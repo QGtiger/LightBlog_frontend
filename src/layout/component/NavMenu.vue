@@ -22,7 +22,7 @@
                     </el-menu-item>
                 </router-link>
                 
-                <el-menu-item index="3-5">退出登录</el-menu-item>
+                <el-menu-item index="3-5" @click="handleLogout">退出登录</el-menu-item>
             </el-submenu>
         </el-menu>
    </div>
@@ -51,9 +51,15 @@ export default {
         },
         handleGetUserName() {
             islogin().then(res => {
-                this.userName = res.data.username;
-                Cookie.set('userName', res.data.username);
+                if(res){
+                    this.userName = res.data.username;
+                    Cookie.set('userName', res.data.username);
+                }
             })
+        },
+        handleLogout(){
+            localStorage.removeItem('token');
+            this.$router.push('/login');
         }
     },
     created() {
