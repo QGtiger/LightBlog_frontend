@@ -26,12 +26,11 @@ export default {
     computed: {},
     watch: {},
     mounted() {
-        this.handleGetBlogs(this.currentPage);
+        this.handleGetRecommendBlogs();
     },
     methods: {
-        handleGetBlogs(page) {
-            getBlogs(page).then(res=>{
-                console.log(res);
+        handleGetRecommendBlogs() {
+            this.$axios.post('/article/api/get/home/articles?page='+this.currentPage).then(res => {
                 this.flowBlog = res.data.data;
             })
         }

@@ -2,7 +2,7 @@
 <template>
    <div class='blog-card'>
        <el-row :gutter="10">
-           <el-col :span="16">
+           <el-col :span="18">
                <div class="blog-title">
                    <p class="title">
                        {{ blog.title }}
@@ -14,7 +14,7 @@
                    </p>
                </div>
            </el-col>
-           <el-col :span="8">
+           <el-col :span="6">
                 <el-image :src="blog.blog_img_url"
                 :preview-src-list="Array.of(blog.blog_img_url)"
                 ></el-image>
@@ -24,8 +24,11 @@
            <div class="article-panel-source">
                <el-avatar size="small" :src="blog.author_img_url"></el-avatar>
                &nbsp;&nbsp;{{ blog.author }}
-               <span class="article-status"><i class="iconfont">&#xe600;</i> {{ blog.users_like }}</span>
-                <span class="article-status"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.views }}</span>
+               <p>
+                    <span class="article-status"><i class="iconfont">&#xe600;</i> {{ blog.usersLike }}</span>
+                    <span class="article-status"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.scanCount }}</span>
+                    <span class="article-status"><i class="iconfont">&#xe861;</i> &nbsp;{{ blog.wordCount }}</span>
+               </p>
            </div>
            <div class="time">
                {{ $util.Time.getFormatTime(blog.updated) }}
@@ -41,7 +44,7 @@ export default {
     components: {},
     data() {
         return {
-            src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+            
         };
     },
     computed: {},
@@ -50,12 +53,6 @@ export default {
 
     },
     methods: {
-        handleGetImg(url) {
-            return this.$config.blog_img + url;
-        },
-        handleGetAvatorImg(url){
-            return this.$config.blog_img + url;
-        }
     },
     created() {
 

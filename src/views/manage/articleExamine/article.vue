@@ -68,11 +68,14 @@
                <el-table-column label="文章简介" prop="description"></el-table-column>
                <el-table-column label="所属专栏" prop="specialColumn"></el-table-column>
                <el-table-column label="所属专题" prop="specialTheme"></el-table-column>
-               <el-table-column label="创建时间">
+               <!-- <el-table-column label="创建时间">
                    <template slot-scope="scope">{{ $util.Time.getAllTime(scope.row.created) }}</template>
-               </el-table-column>
+               </el-table-column> -->
                <el-table-column label="更新时间">
                    <template slot-scope="scope">{{ $util.Time.getAllTime(scope.row.updated) }}</template>
+               </el-table-column>
+               <el-table-column label="审核时间">
+                   <template slot-scope="scope">{{ scope.row.checked ? $util.Time.getAllTime(scope.row.checked):'--' }}</template>
                </el-table-column>
                <el-table-column label="是否上推荐">
                    <template v-slot="scope">
@@ -82,6 +85,7 @@
                        </div>
                    </template>
                </el-table-column>
+               <el-table-column label="字数" prop="wordCount"></el-table-column>
                <el-table-column label="状态">
                    <template v-slot="scope">
                        <div>
@@ -101,6 +105,7 @@
                    <template v-slot="scope">
                        <div>
                            <span class="update" @click="handleJumpExamine(scope.row.id)">审核</span>
+                           <span class="detail" @click="handleGetDetailCheck(scope.row.id)" v-if="scope.row.status > 1">审核详情</span>
                        </div>
                    </template>
                </el-table-column>
@@ -114,6 +119,31 @@
            ></el-pagination>
        </div>
        </div>
+       <el-drawer
+        title="审核结果"
+        :visible.sync="drawerShowResult"
+        direction="ltr"
+        size="30%">
+            <div class="drawer-result">
+                <el-form :model="resultForm" ref="resultForm" label-width="100px" label-position="left">
+                    <el-form-item label="文章标题">
+                        {{ resultForm.title }}
+                    </el-form-item>
+                    <el-form-item label="文章状态">
+                        <span>{{ resultForm.status == 2 ? '已驳回' : '已通过' }}</span>
+                    </el-form-item>
+                    <el-form-item label="文章简介">
+                        {{ resultForm.description }}
+                    </el-form-item>
+                    <el-form-item label="是否推荐">
+                        <span>{{ resultForm.isRecommend ? '推荐' : '不推荐' }}</span>
+                    </el-form-item>
+                    <el-form-item label="审核回复内容">
+                        {{ resultForm.content }}
+                    </el-form-item>
+                </el-form>
+            </div>
+        </el-drawer>
    </div>
 </template>
 
@@ -166,6 +196,14 @@ export default {
                     }
                 }]
             },
+            drawerShowResult: false,
+            resultForm: {
+                title: '',
+                isRecommend: false,
+                status: 3,
+                content: '',
+                description: ''
+            }
         };
     },
     computed: {},
@@ -220,6 +258,19 @@ export default {
                     id
                 }
             })
+        },
+        handleGetDetailCheck(id){ //查看申请详情
+            this.$axios.post('/article/api/get/articlecheck',
+                qs.stringify({
+                    id
+                })
+            ).then(res => {
+                let data = res.data.data;
+                if(res){
+                    this.resultForm = data;
+                    this.drawerShowResult=true;
+                }
+            })
         }
     },
     created() {
@@ -242,7 +293,11 @@ export default {
                 color: #bf0000;
             }
             .adopt{
-                color:chartreuse;
+                color:#34b52c;
+            }
+            .detail{
+                cursor: pointer;
+                color:#bf0000;
             }
         }
     }
