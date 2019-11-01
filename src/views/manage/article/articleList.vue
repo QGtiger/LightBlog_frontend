@@ -64,6 +64,7 @@
                    <template v-slot="scope">
                        <div>
                            <span class="update" @click="handleJumpUpdate(scope.row.id)">编辑</span>
+                           <span class="check" style="cursor:pointer" @click="handleJumpDetail(scope.row.id)">查看</span>
                            <span class="up" v-if="scope.row.status === 0 || scope.row.status === 2" @click="handleUpArticle(scope.row.id, scope.row.title)">申请发布</span>
                            <span class="detail" v-if="scope.row.status === 2 || scope.row.status === 3" @click="handleGetDetailCheck(scope.row.id)">申请详情</span>
                            <span class="del" @click="handleDelArticle(scope.row.id, scope.row.title)">删除</span>
@@ -239,6 +240,14 @@ export default {
                     this.drawerShowResult=true;
                 }
             })
+        },
+        handleJumpDetail(id){
+            this.$router.push({
+                path: 'detail',
+                query: {
+                    id
+                }
+            })
         }
     },
     created() {
@@ -260,7 +269,7 @@ export default {
             color: #bf0000;
         }
         .adopt{
-            color:chartreuse;
+            color:rgb(7, 156, 0);
         }
         .detail{
             cursor: pointer;

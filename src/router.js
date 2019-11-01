@@ -169,6 +169,11 @@ export default new Router({
         name: 'update',
         component: () => import('@/views/manage/article/addUpdateArticle'),
         meta: { title: '编辑文章' }
+      }, {
+        path: 'detail',
+        name: 'detail',
+        component: () => import('@/views/manage/article/articleDetail'),
+        meta: { title: '文章详情' }
       }]
     },
     {

@@ -140,4 +140,7 @@ a {
 .el-dialog{
     min-width: 500px;
 }
+.el-drawer{
+    min-width: 400px;
+}
 </style>

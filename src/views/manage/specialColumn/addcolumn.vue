@@ -127,6 +127,7 @@ export default {
             id: '',
             isUpdate: false,
             isUpdateImage: 0, //0 不更新图片， 1更新
+            fileUid: '', //图片uid
         }
     },
     computed: {
@@ -200,7 +201,8 @@ export default {
         },
         handleCancelEdit() { //放弃编辑图片
             this.dialogEditImage = false;
-            // this.cropper.img = null;
+            this.specialColumnForm.coverUrl = [];
+            this.showUploadBtn = false;
         },
         handlePictureCardPreview(file){
             this.dialogImageUrl = file.url;
@@ -210,8 +212,26 @@ export default {
            this.showUploadBtn = false;
            this.specialColumnForm.coverUrl = [];
         },
-        handleUploadImage(file) {
-            console.log(file)
+        handleBeforeUpload(file) {
+            //上传图片格式限制
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isImg = file.raw.type.indexOf("image/") != -1;
+            if (!isImg) {
+                this.$message.warning("请选择图片");
+                return isLt2M && isImg;
+            }
+
+            if (!isLt2M) {
+                this.$message.error("上传头像图片大小不能超过 2MB!");
+            }
+            return isLt2M && isImg;
+        },
+        handleUploadImage(file) { //change 
+            if (!this.handleBeforeUpload(file)) {
+                this.specialColumnForm.coverUrl = [];
+                return;
+            }
+            this.fileUid = file.raw.uid;
             this.showUploadBtn = true;
             this.dialogEditImage = true;
             this.cropper.img = file.url;
@@ -225,6 +245,7 @@ export default {
                     data = window.URL.createObjectURL(new Blob([data]))
                 }
                 this.specialColumnForm.coverUrl.splice(0,1,{
+                    uid: this.fileUid,
                     url: data
                 })
                 this.dialogEditImage =false;

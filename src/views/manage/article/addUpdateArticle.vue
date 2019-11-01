@@ -210,6 +210,7 @@ export default {
             columnList: [], //专栏
             themeList: {}, //专题
             personalColumnList: [], //个人专栏
+            fileUid: '', //上传图片的uid
         };
     },
     computed: {
@@ -235,13 +236,34 @@ export default {
             this.showUploadBtn = false;
             this.articleForm.previewImg = [];
         },
+        handleBeforeUpload(file) {
+            //上传图片格式限制
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isImg = file.raw.type.indexOf("image/") != -1;
+            if (!isImg) {
+                this.$message.warning("请选择图片");
+                return isLt2M && isImg;
+            }
+
+            if (!isLt2M) {
+                this.$message.error("上传头像图片大小不能超过 2MB!");
+            }
+            return isLt2M && isImg;
+        },
         handleUploadImage(file) { //change 
+            if (!this.handleBeforeUpload(file)) {
+                this.articleForm.previewImg = [];
+                return;
+            }
             this.showUploadBtn = true;
             this.dialogEditImage = true;
             this.cropper.img = file.url;
+            this.fileUid = file.raw.uid;
         },
         handleCancelEdit() { //取消裁剪
             this.dialogEditImage = false;
+            this.articleForm.previewImg = [];
+            this.showUploadBtn = false;
         },
         realTime(data){ //实时裁剪
             this.previews = {
@@ -266,6 +288,7 @@ export default {
             this.isUpdateImg = 1;
             this.$refs.cropper.getCropData((data) => {
                 this.articleForm.previewImg.splice(0,1,{
+                    uid: this.fileUid,
                     url: data
                 })
                 this.dialogEditImage =false;

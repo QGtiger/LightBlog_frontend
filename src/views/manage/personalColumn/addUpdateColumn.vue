@@ -125,6 +125,7 @@ export default {
             dialogImageUrl: '',
             dialogEditImage: false, //裁剪dialog
             isUpdateImage: 0, //是否更新图片
+            fileUid: '', //图片uid
         };
     },
     computed: {
@@ -147,14 +148,34 @@ export default {
            this.showUploadBtn = false;
            this.columnForm.previewImg = [];
         },
-        handleUploadImage(file) { //裁剪图片
-            console.log(file)
+        handleBeforeUpload(file) {
+            //上传图片格式限制
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isImg = file.raw.type.indexOf("image/") != -1;
+            if (!isImg) {
+                this.$message.warning("请选择图片");
+                return isLt2M && isImg;
+            }
+
+            if (!isLt2M) {
+                this.$message.error("上传头像图片大小不能超过 2MB!");
+            }
+            return isLt2M && isImg;
+        },
+        handleUploadImage(file) { //change 
+            if (!this.handleBeforeUpload(file)) {
+                this.columnForm.previewImg = [];
+                return;
+            }
+            this.fileUid = file.raw.uid;
             this.showUploadBtn = true;
             this.dialogEditImage = true;
             this.cropper.img = file.url;
         },
         handleCancelEdit() { //取消裁剪
             this.dialogEditImage = false;
+            this.showUploadBtn = false;
+            this.columnForm.previewImg = [];
         }, 
         handleToBlob(ndata) {       // base64转blob
             //ndata为base64格式地址
@@ -184,6 +205,7 @@ export default {
                     data = window.URL.createObjectURL(new Blob([data]))
                 }
                 this.columnForm.previewImg.splice(0,1,{
+                    uid: this.fileUid,
                     url: data
                 })
                 this.dialogEditImage =false;

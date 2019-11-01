@@ -1,7 +1,7 @@
 <!-- 博客首页缩略显示 -->
 <template>
    <div class='blog-card'>
-       <el-row :gutter="10">
+       <el-row :title="blog.description" :gutter="10">
            <el-col :span="18">
                <div class="blog-title">
                    <p class="title">
@@ -25,9 +25,9 @@
                <el-avatar size="small" :src="blog.author_img_url"></el-avatar>
                &nbsp;&nbsp;{{ blog.author }}
                <p>
-                    <span class="article-status"><i class="iconfont">&#xe600;</i> {{ blog.usersLike }}</span>
-                    <span class="article-status"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.scanCount }}</span>
-                    <span class="article-status"><i class="iconfont">&#xe861;</i> &nbsp;{{ blog.wordCount }}</span>
+                    <span class="article-status" :title="handleShowTextTitleLike(blog.usersLike)"><i class="iconfont">&#xe600;</i> {{ blog.usersLike }}</span>
+                    <span class="article-status" :title="handleShowTextScanCount(blog.scanCount)"><i class="iconfont">&#xe703;</i> &nbsp;{{ blog.scanCount }}</span>
+                    <span class="article-status" :title="handleShowTextTitleWord(blog.wordCount)"><i class="iconfont">&#xe861;</i> &nbsp;{{ blog.wordCount }}</span>
                </p>
            </div>
            <div class="time">
@@ -53,6 +53,15 @@ export default {
 
     },
     methods: {
+        handleShowTextTitleLike(value){
+            return `${value} 人赞`
+        },
+        handleShowTextScanCount(value){
+            return `${value} 人阅读`
+        },
+        handleShowTextTitleWord(value){
+            return ` 字数 ${value}`
+        }
     },
     created() {
 
@@ -112,6 +121,7 @@ export default {
     margin-left: 10px;
     font-size: 12px;
     color: rgb(107, 81, 81);
+    cursor: pointer;;
 }
 
 .meta-footer .time{

@@ -39,7 +39,7 @@
                 type="index"
                 label="序号"
                 :index="indexMethod"
-                width="200">
+                width="70">
                 </el-table-column>
                 <el-table-column prop="specialTheme" label="专题名称">
 

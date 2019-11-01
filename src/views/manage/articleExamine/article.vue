@@ -6,7 +6,7 @@
            <div class="search-cont">
                <el-form :model="searchForm" :inline="true">
                    <el-form-item label="状态: ">
-                       <el-select v-model="searchForm.status">
+                       <el-select v-model="searchForm.status" @change="handleGetArticleList">
                            <el-option label="全部" value=""></el-option>
                            <el-option
                             v-for="(item,index) in statusList"
