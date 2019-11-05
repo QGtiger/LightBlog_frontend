@@ -43,7 +43,12 @@ export default new Router({
         name: '404',
         component: () => import('@/components/404/Page404.vue'),
         meta: {title: '404'}
-      }]
+      },{
+        path:'/blog/:id',
+        name: 'blog',
+        component: () => import('@/views/blog/blogDetail.vue'),
+        meta: { title: '文章详情' }
+      },]
 
     },
     {

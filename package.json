@@ -32,6 +32,8 @@
     "eslint-plugin-vue": "^5.0.0",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
+    "node-sass": "^4.5.2",
+    "sass-loader": "^6.0.3",
     "vue-cropper": "^0.4.9",
     "vue-template-compiler": "^2.6.10",
     "wowjs": "^1.1.3"

@@ -315,7 +315,7 @@ export default {
             this.$refs.articleForm.validate(valid => {
                 if(valid){
                     if(this.isUpdate){
-                        if(this.$refs.editor.d_render === ''){
+                        if(this.articleForm.body.replace(/(^\s*)|(\s*$)/g, "") === ''){
                             this.$message.warning('文章正文不能为空哦~~');
                             return;
                         }
@@ -328,8 +328,8 @@ export default {
                             specialColumnId: this.articleForm.columnId,
                             specialThemeId: this.articleForm.themeId,
                             personalColumnId: this.articleForm.personalColumnId,
-                            body: this.articleForm.body,
-                            body_html: this.$refs.editor.d_render,
+                            body: this.emoji(this.articleForm.body),
+                            body_html: this.articleForm.body,
                             isUpdateImg: this.isUpdateImg,
                             previewImg: coverImageBlob
                         }

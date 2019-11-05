@@ -34,15 +34,15 @@
            </div>
            <div class="mavon-editor">
                <mavon-editor
-                class="md"
-                :value="articleForm.body"
-                :subfield = "false"
-                :defaultOpen = "'preview'"
-                :toolbarsFlag = "false"
-                :editable="false"
-                :scrollStyle="true"
-                :ishljs = "true"
-            ></mavon-editor>
+                    class="md"
+                    :value="articleForm.body"
+                    :subfield = "false"
+                    :defaultOpen = "'preview'"
+                    :toolbarsFlag = "false"
+                    :editable="false"
+                    :scrollStyle="true"
+                    :ishljs = "true"
+                ></mavon-editor>
                <div class="meta-footer">
                    <el-button @click="handleCancelBack">确认</el-button>
                </div>
