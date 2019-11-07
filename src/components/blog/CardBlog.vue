@@ -4,9 +4,12 @@
        <el-row :title="blog.description" :gutter="10">
            <el-col :span="18">
                <div class="blog-title">
-                   <p class="title">
-                       {{ blog.title }}
-                   </p>
+                   <router-link :to="'/blog/'+blog.id">
+                        <p class="title">
+                            {{ blog.title }}
+                        </p>
+                   </router-link>
+                   
                </div>
                <div class="blog-text">
                    <p class="text">
@@ -126,6 +129,10 @@ export default {
 
 .meta-footer .time{
     font-size: 14px;
+}
+
+a{
+    color: rgb(44, 62, 80);
 }
 
 @media screen and (max-width: 500px){
