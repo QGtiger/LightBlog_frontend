@@ -4,6 +4,11 @@ import Home from './views/Home.vue';
 import Layout from './layout/layout.vue';
 import LayoutManage from './layout/backLayout.vue';
 
+
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 Vue.use(Router)
 
 export default new Router({
@@ -32,7 +37,7 @@ export default new Router({
     {
       path: '/',
       component: Layout,
-      redirect: '/index',
+      redirect: '/welcome',
       children: [{
         path: 'index',
         name: 'index',
@@ -179,6 +184,23 @@ export default new Router({
         name: 'detail',
         component: () => import('@/views/manage/article/articleDetail'),
         meta: { title: '文章详情' }
+      }]
+    },
+    {
+      path:'/author',
+      name: 'author',
+      component: Layout,
+      redirect: '/404',
+      children:[{
+        path:'edit',
+        name: 'edit',
+        component: () => import('@/views/author/authorEdit'),
+        meta: {title: '用户编辑'}
+      },{
+        path: 'detail',
+        name: 'detail',
+        component: () => import('@/views/author/authorDetail'),
+        meta: {title: '用户信息'}
       }]
     },
     {

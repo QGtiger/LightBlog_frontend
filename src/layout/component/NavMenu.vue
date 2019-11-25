@@ -1,8 +1,8 @@
 <!-- 导航栏 -->
 <template>
    <div class='nav-menu'>
-       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-            <el-menu-item index="1">
+       <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
+            <el-menu-item index="1" >
                 <router-link to="/index">
                     博客首页
                 </router-link>
@@ -10,11 +10,15 @@
             <el-menu-item index="2">聊天室</el-menu-item>
             <el-submenu class="username-cont" index="3" style="float: right;width: 100px">
                 <template slot="title">
-                    <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-                    <span class="username">{{userName}}</span>
+                    <el-avatar :src="this.$store.state.avatorUrl"></el-avatar>
+                    <span class="username">{{this.$store.state.username}}</span>
                 </template>
-                <el-menu-item index="3-1"><i class="el-icon-menu"></i>个人信息</el-menu-item>
-                <el-menu-item index="3-2">完善信息</el-menu-item>
+                <router-link to="/author/detail">
+                    <el-menu-item index="3-1"><i class="el-icon-menu"></i>个人信息</el-menu-item>
+                </router-link>
+                <router-link to="/author/edit">
+                    <el-menu-item index="3-2">完善信息</el-menu-item>
+                </router-link>
                 <el-menu-item index="3-3">修改密码</el-menu-item>
                 <router-link to="/manage/index">
                     <el-menu-item index="3-4">
@@ -37,7 +41,6 @@ export default {
     data() {
     return {
         activeIndex: '1',
-        userName: ''
     };
     },
     computed: {},
@@ -52,7 +55,8 @@ export default {
         handleGetUserName() {
             islogin().then(res => {
                 if(res){
-                    this.userName = res.data.username;
+                    this.$store.commit('setUserName', res.data.username);
+                    this.$store.commit('setAvatorUrl', res.data.avator);
                     Cookie.set('userName', res.data.username);
                 }
             })

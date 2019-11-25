@@ -91,7 +91,7 @@ export default {
                                 message: h('i', { style: 'color: teal'}, 'LightBlog是基于Django后端处理，和Vue的前端展示的博客网站，Just for fun.')
                                 });
                                 localStorage.setItem('token', data.token)
-                                this.$router.push('/')
+                                this.$router.push('/index')
                             }else{
                                 this.$message.error(data.tips);
                             }

@@ -18,11 +18,11 @@
                 <div class="markdown-meta-right">
                     <div class="author-info">
                         <div class="author-avator">
-                            <el-avatar :src="blogInfo.author_url"></el-avatar>
+                            <div style="display:inline-block;cursor:pointer" @click="handleJumpAuthorDetail(blogInfo.author)"><el-avatar :src="blogInfo.author_url"></el-avatar></div>
                         </div>
                         <div class="author-avator-right">
                             <div class="right-top">
-                                <span class="author-text">{{ blogInfo.author }}</span>
+                                <span class="author-text" @click="handleJumpAuthorDetail(blogInfo.author)">{{ blogInfo.author }}</span>
                                 <!-- <span>123</span> -->
                             </div>
                             <div class="right-bottom">
@@ -103,6 +103,14 @@ export default {
         handleJumpBlogDetail(id) { //跳转到文章详情
             console.log(id)
             this.$router.push("/blog/" + id);
+        },
+        handleJumpAuthorDetail(username){
+            this.$router.push({
+                path: '/author/detail',
+                query: {
+                    user: username
+                }
+            })
         }
     },
     created() {
@@ -163,6 +171,12 @@ export default {
                     flex-direction: column;
                     justify-content: flex-start;
                     line-height: 22px;
+                    .author-text{
+                        cursor: pointer;
+                    }
+                    .author-text:hover{
+                        color: #777;
+                    }
                     .right-bottom{
                         font-size: 12px;
                         color: #969696;

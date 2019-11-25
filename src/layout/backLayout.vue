@@ -60,9 +60,6 @@ html,body{
 
 }
 
-#app{
-    height: 100%;
-}
 
 #app .wrap{
     height: 100%
@@ -76,7 +73,6 @@ html,body{
 }
 
 .body-cont {
-    height: calc(100% - 70px);
 }
 
 .body-cont .container{
