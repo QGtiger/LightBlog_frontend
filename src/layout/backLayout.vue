@@ -139,4 +139,10 @@ a {
 .el-drawer{
     min-width: 400px;
 }
+.el-input__inner{
+    background-color: #fafafa;
+}
+.el-upload-list--picture-card .el-upload-list__item-thumbnail{
+    object-fit: cover;
+}
 </style>

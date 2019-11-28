@@ -41,6 +41,16 @@ export default {
 }
 </script>
 <style>
+@font-face{
+  font-family: MainFont;
+  src: url('../assets/font/GoodVibrationsROB Script.ttf');
+}
+
+
+a:hover{
+  transition: all .3s ease-out 0s;
+}
+
 .content {
     margin: auto;
     width: 500px;

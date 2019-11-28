@@ -1,10 +1,10 @@
 <!-- 用户个人界面 -->
 <template>
-   <div class='author-detail infinite-list' >
+   <div class='author-detail' >
        <div class="author-cont">
            <div class="author-header" :style="'background-image:url('+userinfo.authorBg+')'">
                <div class="author-avator">
-                   <img :src="userinfo.avatorUrl" :title="this.$store.state.username" alt="">
+                   <img :src="userinfo.avatorUrl" :title="userinfo.username" alt="">
                </div>
                <h2 class="author-name">{{ userinfo.username }}</h2>
                <div class="change-bg" v-if="userinfo.username === this.$store.state.username">
@@ -158,6 +158,7 @@ export default {
     methods: {
         handleCancelEdit() {
             this.dialogEditImage = false;
+            this.$refs.selectImg.value = null;
         },
         // base64转blob
         handleToBlob(ndata) {
@@ -295,7 +296,8 @@ export default {
 .author-detail{
     .author-cont{
         width: 800px;
-        margin: 50px auto 30px;
+        padding-top: 50px;
+        margin: 0px auto 30px;
         .author-header{
             height: 300px;
             background-size: 100% 100%;
@@ -307,6 +309,7 @@ export default {
                 top: 170px;
                 width: 100%;
                 text-align: center;
+                font-family: MainFont;
             }
             .change-bg{
                 display: inline-block;
@@ -362,9 +365,6 @@ export default {
         }
         .author-blogs{
             margin-top: 30px;
-            .item{
-                margin-top: 20px;
-            }
             .waiting{
                 padding: 20px;
                 text-align: center;

@@ -88,14 +88,13 @@ export default {
     width: 100%;
     margin:0 auto;
     height: 180px;
-    padding: 20px 0;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f0f0f0;
-    background-color: white;
 }
 
 .blog-card:hover{
     margin: 0 -20px;
-    padding: 20px 20px;
+    padding:0px 20px 10px 20px;
     background: #fafafa;
 }
 

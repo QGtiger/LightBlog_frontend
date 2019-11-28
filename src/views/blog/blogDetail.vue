@@ -138,7 +138,8 @@ export default {
     .blog-cont{
         width: 80%;
         min-width: 1000px;
-        margin: 20px auto;
+        padding-top: 40px;
+        margin: 0px auto;
         position: relative;
 
         .markdown-cont{
@@ -153,7 +154,7 @@ export default {
             border-radius: 4px;
             position: absolute;
             right: 0;
-            top: 0;
+            top: 40px;
             padding: 8px 12px;
             box-shadow: 0px 0px 10px #cccc;
             

@@ -20,7 +20,7 @@
                 type="index"
                 label="序号"
                 :index="indexMethod"
-                width="200">
+                width="100">
                 </el-table-column>
                 <el-table-column prop="specialColumn" label="专栏名称">
 
@@ -38,12 +38,20 @@
                         </div>
                     </template>
                 </el-table-column>
+                <el-table-column label="是否推荐">
+                    <template v-slot="scope">
+                        <div>
+                            <span>{{ scope.row.isRecommend ? "推荐" : "未推荐" }}</span>
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作">
                     <template v-slot="scope">
                         <div>
                             <span class="update" @click="handleJumpUpdateSpecialColumn(scope.row.id)">编辑</span>
                             <span class="up" v-if="scope.row.status === 0" @click="handleUpColumn(scope.row.id,scope.row.specialColumn )">发布</span>
                             <span class="down" v-else @click="handleDownColumn(scope.row.id, scope.row.specialColumn)">下架</span>
+                            <span class="recommend" @click="handleRecommendColumn(scope.row)">{{ scope.row.isRecommend ? "不推荐" : "推荐" }}</span>
                             <span class="del" @click="handleDelSpecialColumn(scope.row.id,scope.row.specialColumn)">删除</span>
                         </div>
                     </template>
@@ -247,6 +255,40 @@ export default {
 
             })
         },
+        handleRecommendColumn(row){ //推荐专栏
+            if(row.status === 0){
+                this.$message.warning('请先发布，再进行推荐该专栏')
+            }else{
+                let type = row.isRecommend ? "notRecommend" : "recommend";
+                let text = row.isRecommend ? "下架推荐" : "推荐";
+                this.$confirm("确定 "+ text + " 该专栏?", "注意", {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                    center: true
+                }).then(() => {
+                    this.$axios.post('/article/api/recommend/special_column',
+                        qs.stringify({
+                            type: type,
+                            columnId: row.id
+                        })
+                    ).then(res=>{
+                        if(res){
+                            let data = res.data;
+                            if(data.code == 200){
+                                this.$message.success(data.tips);
+                                this.handleGetSpecialColumnList();
+                            }else{
+                                this.$message.warning(data.tips);
+                            }
+                        }
+                    })
+
+                }).catch(() => {
+
+                })
+            }
+        },
         handleUploadImage(file, fileList){
             console.log(file)
             this.showUploadBtn = true;
@@ -305,5 +347,10 @@ export default {
 
 .disabled .el-upload--picture-card{
     display: none;
+}
+
+.recommend{
+    cursor: pointer;
+    padding: 0 6px;
 }
 </style>

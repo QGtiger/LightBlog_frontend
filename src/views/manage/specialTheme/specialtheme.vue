@@ -187,8 +187,12 @@ export default {
                     qs.stringify({themeId: id})
                 ).then(res=>{
                     if(res){
-                        this.$message.success('发布成功')
-                        this.handleGetSpecialThemeList()
+                        if(res.data.code == 200){
+                            this.$message.success('发布成功')
+                            this.handleGetSpecialThemeList()
+                        }else{
+                            this.$message.warning(res.data.tips)
+                        }
                     }
                 })
                             

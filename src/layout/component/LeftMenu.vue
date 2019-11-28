@@ -27,7 +27,13 @@
           <router-link to="/specialtheme/index">
             <el-menu-item><i class="iconfont">&#xe834;</i> 专题管理</el-menu-item>
           </router-link>          
-      </el-submenu>      
+      </el-submenu>
+      <router-link to="/banner/index">
+        <el-menu-item>
+          <i class="el-icon-tickets"></i>
+          <span slot="title">走马灯管理</span>
+        </el-menu-item>
+      </router-link>
       <router-link to="/personalcolumn/index">
         <el-menu-item>
           <i class="el-icon-tickets"></i>

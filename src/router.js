@@ -160,6 +160,17 @@ export default new Router({
       }]
     },
     {
+      path: '/banner',
+      name: 'banner',
+      component: LayoutManage,
+      redirect: '/banner/index',
+      children: [{
+        path: 'index',
+        component: () => import('@/views/manage/carousel/carouselBanner'),
+        meta: { title: 'Banner 管理' }
+      }]
+    },
+    {
       path:'/article',
       name: 'article',
       component: LayoutManage,

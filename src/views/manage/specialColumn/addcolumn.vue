@@ -244,6 +244,7 @@ export default {
                 // 把Array Buffer转化为blob 如果是base64不需要
                     data = window.URL.createObjectURL(new Blob([data]))
                 }
+                console.log(data)
                 this.specialColumnForm.coverUrl.splice(0,1,{
                     uid: this.fileUid,
                     url: data

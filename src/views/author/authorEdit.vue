@@ -107,6 +107,7 @@ export default {
     methods: {
         handleCancelEdit() {
             this.dialogEditImage = false;
+            this.$refs.selectImg.value = null;
         },
         // base64转blob
         handleToBlob(ndata) {
