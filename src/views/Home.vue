@@ -21,7 +21,7 @@ export default {
     handleGo() {
       islogin().then(res=>{
         console.log(res)
-        if(res.data.success){
+        if(res){
           const h = this.$createElement;
           this.$notify({
             title: '欢迎来到LightBlog',

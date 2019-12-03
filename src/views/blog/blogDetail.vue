@@ -200,6 +200,13 @@ export default {
                     padding: 5px;
                     .title-cont{
                         padding: 8px 0px 5px;
+                        .title-text{
+                            font-size: 15px;
+                            transition: all .3s ease-out;
+                        }
+                        .title-text:hover{
+                            color:#18b0de;
+                        }
                     }
 
                     .meta-footer{

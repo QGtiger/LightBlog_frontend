@@ -7,6 +7,24 @@
                <el-button type="primary" @click="handleShowAddBanner">添加 Banner</el-button>
            </div>
        </div>
+       <div class="main-cont">
+           <div class="table">
+               <el-table :data="bannerList">
+                   <el-table-column label="序号" type="index" :index="indexMethod" width="100"></el-table-column>
+                   <el-table-column label="Banner 名称" prop="title"></el-table-column>
+                   <el-table-column label="Banner 描述" prop="desc"></el-table-column>
+                   <el-table-column label="Banner 指向URL" prop="url"></el-table-column>
+                   <el-table-column label="操作">
+                       <template v-slot="scope">
+                           <div>
+                               <span class="update" @click="handleUpdateBanner(scope.row.id)">编辑</span>
+                               <span class="del" @click="handleDelBanner(scope.row.id)">删除</span>
+                           </div>
+                       </template>
+                   </el-table-column>
+               </el-table>
+           </div>
+       </div>
        <el-dialog
         :title="title"
         :append-to-body="true"
@@ -43,7 +61,8 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleAddBanner">确认</el-button>
+                    <el-button type="primary" @click="handleAddBanner" :loading="loadButton">确认</el-button>
+                    <el-button type="primary" plain @click="handleCancelAddBanner">取消</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -61,6 +80,7 @@
 
 <script>
 import Title from '@/components/title/title';
+import qs from 'qs';
 export default {
     components: {
         Title
@@ -103,6 +123,9 @@ export default {
             showUploadBtn: false,
             dialogImageUrl: '',
             dialogimg: false,
+
+            loadButton: false,
+            bannerList: [],
         };
     },
     computed: {
@@ -112,9 +135,16 @@ export default {
     },
     watch: {},
     mounted() {
-
+        this.handleBannerList();
     },
     methods: {
+        handleBannerList(){ //获取banner list
+            this.$axios.post('/article/api/get/banner').then(res=>{
+                if(res){
+                    this.bannerList = res.data.list;
+                }
+            })
+        },
         handleShowAddBanner() { //
             this.dialogShowAddBanner = true;
         },
@@ -139,7 +169,7 @@ export default {
             })
         },
         handleAddBanner(){ //确认添加Banner
-            console.log(this.bannerForm)
+            this.loadButton = true;
             this.$refs.bannerForm.validate(valid=>{
                 if(valid){
                     if(this.isUpdate){
@@ -158,18 +188,16 @@ export default {
                         this.$axios.post('/article/api/add/banner', 
                             formData
                         ).then(res=> {
-                            // this.$message.success(res.data.tips)
-                            // this.specialColumnForm= {
-                            //     columnName: '',
-                            //     description: '',
-                            //     coverUrl: []
-                            // }
-                            // this.$router.back();
-                            console.log(res)
+                            if(res){
+                                this.$message.success('添加成功')
+                                this.handleCancelAddBanner();
+                                this.handleBannerList();
+                            }
+                            this.loadButton = false;
                         }) 
                     }
                 }else{
-
+                    this.loadButton = false;
                 }
             })
         },
@@ -214,6 +242,24 @@ export default {
             }
             this.$refs['bannerForm'].clearValidate('bannerPreview');
         },
+        indexMethod(index) {
+            return index + 1;
+        },
+        handleUpdateBanner(id) { //更新Banner
+            this.isUpdate = true;
+            this.$axios.post('/article/api/detail/banner',
+                qs.stringify({
+                    id
+                })
+            ).then(res=>{
+                if(res){
+                    console.log(res.data.data)
+                }
+            })
+        },
+        handleDelBanner(id) { //删除Banner
+
+        }
     },
     created() {
 
