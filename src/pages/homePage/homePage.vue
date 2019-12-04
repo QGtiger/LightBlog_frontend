@@ -5,9 +5,9 @@
            <div class="main-cont-header">
                <div class="banner-cont">
                    <el-carousel trigger="click" height="300px" :interval="5000">
-                    <el-carousel-item v-for="item in carouselImgList" :key="item">
-                        <a href="https://www.baidu.com" target="_blank">
-                            <img :src="item" alt="">
+                    <el-carousel-item v-for="item in carouselImgList" :key="item.id">
+                        <a :href="item.url" target="_blank">
+                            <img :src="item.image" :title="item.title" alt="">
                         </a>
                     </el-carousel-item>
                     </el-carousel>
@@ -77,7 +77,7 @@ export default {
             size: 10,
             timeout: null,
             recommendList: [],
-            carouselImgList:['http://qnpic.top/yoona2.jpg','http://qnpic.top/yoona3.jpg','http://qnpic.top/yoona4.jpg','http://qnpic.top/yoona5.jpg'],
+            carouselImgList:[],
             columnList: [],
         };
     },
@@ -88,12 +88,22 @@ export default {
         this.handleGetRecommendBlogs();
         this.handleGetMostViews();
         this.handleGetSpecialColumn();
+        this.handleBannerList();
     },
     methods: {
+        handleBannerList(){ //获取Banner
+            this.$axios.post('/article/api/get/banner').then(res=>{
+                if(res){
+                    this.carouselImgList = res.data.list;
+                }
+            })
+        },
         handleGetRecommendBlogs() {
             this.$axios.post('/article/api/get/home/articles?page='+this.currentPage+'&&size='+this.size).then(res => {
-                this.flowBlog.push(...res.data.data);
-                this.totalPage = res.data.totalPage;
+                if(res){
+                    this.flowBlog.push(...res.data.data);
+                    this.totalPage = res.data.totalPage;
+                }
             })
         },
         handleDebounceFun(fn, wait){ // 防抖请求数据

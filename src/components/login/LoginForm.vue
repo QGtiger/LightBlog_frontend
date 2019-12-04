@@ -8,7 +8,7 @@
            <el-form-item label="用户名" prop="username">
                <el-input prefix-icon="el-icon-user-solid"  v-model="loginForm.username" auto-complete="off"></el-input>
            </el-form-item>
-           <el-form-item label="密码" prop="password">
+           <el-form-item label="密码" prop="password" @keyup.native="handleLogin($event)">
                <el-input prefix-icon="el-icon-notebook-2" type="password" v-model="loginForm.password" auto-complete="off"></el-input>
            </el-form-item>
                <el-button type="primary" @click="submitForm('loginForm')" style="width: 100%">登录</el-button>
@@ -103,6 +103,11 @@ export default {
                     this.$message.warning('请正确填写信息。');
                 }
             })
+        },
+        handleLogin(e){
+            if(e.keyCode == 13){
+                this.submitForm();
+            }
         }
     },
     created() {

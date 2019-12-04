@@ -126,6 +126,9 @@ export default {
 
             loadButton: false,
             bannerList: [],
+
+            updateId: '',
+            isUpdateImg: false, //是否更新了图片
         };
     },
     computed: {
@@ -152,6 +155,12 @@ export default {
             this.dialogShowAddBanner = false;
             this.showUploadBtn = false;
             this.$refs.bannerForm.resetFields();
+            this.bannerForm = {
+                bannerName: '',
+                bannerDesc: '',
+                bannerUrl: '',
+                bannerPreview: [],
+            };
         },
         // base64转blob
         handleToBlob(ndata) {
@@ -173,7 +182,30 @@ export default {
             this.$refs.bannerForm.validate(valid=>{
                 if(valid){
                     if(this.isUpdate){
-
+                        const formData = new FormData();
+                        const postData = {
+                            title: this.bannerForm.bannerName,
+                            desc: this.bannerForm.bannerDesc,
+                            url: this.bannerForm.bannerUrl,
+                            image: this.isUpdateImg ? this.handleToBlob(this.bannerForm.bannerPreview[0].url) : '',
+                            isUpdateImg: this.isUpdateImg,
+                            id: this.updateId
+                        }
+                        Object.keys(postData).forEach((key) => {
+                            formData.append(key, postData[key]);
+                        });
+                        this.$axios.post('/article/api/update/banner',
+                            formData
+                        ).then(res=>{
+                            if(res){
+                                this.$message.success('更新成功');
+                                this.isUpdate = false;
+                                this.isUpdateImg = false;
+                                this.handleCancelAddBanner();
+                                this.handleBannerList();
+                            }
+                            this.loadButton = false;
+                        })
                     }else{
                         const formData = new FormData();
                         const postData = {
@@ -229,6 +261,9 @@ export default {
                 this.bannerForm.bannerPreview = [];
                 return;
             }
+            if(this.isUpdate){
+                this.isUpdateImg = true;
+            }
             this.showUploadBtn = true;
             let reader = new FileReader(); //html5读文件
             let bs64Url;
@@ -246,19 +281,50 @@ export default {
             return index + 1;
         },
         handleUpdateBanner(id) { //更新Banner
-            this.isUpdate = true;
             this.$axios.post('/article/api/detail/banner',
                 qs.stringify({
                     id
                 })
             ).then(res=>{
                 if(res){
-                    console.log(res.data.data)
+                    this.updateId = id;
+                    this.isUpdate = true;
+                    let resData = res.data.data;
+                    this.bannerForm.bannerName = resData.title;
+                    this.bannerForm.bannerDesc = resData.desc;
+                    this.bannerForm.bannerUrl = resData.url;
+                    this.bannerForm.bannerPreview.splice(0,1,{
+                        url: resData.image
+                    })
+                    this.dialogShowAddBanner = true;
+                    this.showUploadBtn = true;
                 }
             })
+            
         },
         handleDelBanner(id) { //删除Banner
+            this.$confirm('确认删除此 Banner ?', '注意', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                cancelButtonClass: 'el-button-danger',
+                closeOnClickModal: false,
+                closeOnPressEscape: false,
+                type: 'warning',
+                center: true
+            }).then(() => {
+                this.$axios.post('/article/api/del/banner',
+                    qs.stringify({
+                        id
+                    })
+                ).then(res => {
+                    if(res){
+                        this.$message.success('删除成功');
+                        this.handleBannerList();
+                    }
+                })
+            }).catch(() => {
 
+            })
         }
     },
     created() {
