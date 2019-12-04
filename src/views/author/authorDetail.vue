@@ -29,33 +29,101 @@
                    </div>
                </div> -->
            </div>
-           <div class="author-blogs">
-                <el-tabs v-model="activeName" style="text-align:center" @tab-click="handleTabClick">
-                    <el-tab-pane label="推荐文章" name="recommend">
-                        <div class="recommend-list">
-                            <div class="recommend-item item" v-for="(item,index) in recommendList" :key="index">
-                                <BlogCard :blog="item"></BlogCard>
+           <div class="main-container">
+               <div class="author-blogs">
+                    <el-tabs v-model="activeName" style="text-align:center" @tab-click="handleTabClick">
+                        <el-tab-pane label="推荐文章" name="recommend">
+                            <div class="recommend-list">
+                                <div class="recommend-item item" v-for="(item,index) in recommendList" :key="index">
+                                    <BlogCard :blog="item"></BlogCard>
+                                </div>
+                                <p class="waiting"><span v-if="recommendWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
                             </div>
-                            <p class="waiting"><span v-if="recommendWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
-                        </div>
-                    </el-tab-pane>
-                    <el-tab-pane label="发布文章" name="publish">
-                        <div class="publish-list">
-                            <div class="publish-item item" v-for="(item,index) in publishList" :key="index">
-                                <BlogCard :blog="item"></BlogCard>
+                        </el-tab-pane>
+                        <el-tab-pane label="发布文章" name="publish">
+                            <div class="publish-list">
+                                <div class="publish-item item" v-for="(item,index) in publishList" :key="index">
+                                    <BlogCard :blog="item"></BlogCard>
+                                </div>
+                                <p class="waiting"><span v-if="publishWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
                             </div>
-                            <p class="waiting"><span v-if="publishWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
-                        </div>
-                    </el-tab-pane>
-                    <el-tab-pane label="点赞文章" name="like">
-                        <div class="like-list">
-                            <div class="like-item item" v-for="(item,index) in likeList" :key="index">
-                                <BlogCard :blog="item"></BlogCard>
+                        </el-tab-pane>
+                        <el-tab-pane label="点赞文章" name="like">
+                            <div class="like-list">
+                                <div class="like-item item" v-for="(item,index) in likeList" :key="index">
+                                    <BlogCard :blog="item"></BlogCard>
+                                </div>
+                                <p class="waiting"><span v-if="likeWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
                             </div>
-                            <p class="waiting"><span v-if="likeWaiting">努力加载中...</span><span v-else>没有更多了...</span></p>
+                        </el-tab-pane>
+                        <el-tab-pane label="ta关注的人" name="follow">
+                            <div class="follow-list">
+                                <div class="follow-item item" v-for="item in followList" :key="item.id">
+                                    <div class="item-avator" @click="handleJumpAuthorDetail(item.username)">
+                                        <img :src="item.url" :title="item.username" alt="">
+                                    </div>
+                                    <div class="item-info">
+                                        <div class="author-username">
+                                            <p class="text"><router-link :to="'/author/detail?user='+item.username">{{ item.username }}</router-link></p>
+                                        </div>
+                                        <div class="author-desc">
+                                            <p class="text">{{ item.aboutme }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <el-pagination
+                                    :current-page.sync="followPage"
+                                    @current-change="handleFollowList('follow')"
+                                    :page-size="10"
+                                    :total="followTotal"
+                                    :hide-on-single-page="true"
+                                    layout="total, prev, pager, next"
+                                ></el-pagination>
+                            </div>
+                        </el-tab-pane>
+                        <el-tab-pane label="关注ta的人" name="followed">
+                            <div class="followed-list">
+                                <div class="followed-item item" v-for="item in followedList" :key="item.id">
+                                    <div class="item-avator" @click="handleJumpAuthorDetail(item.username)">
+                                        <img :src="item.url" :title="item.username" alt="">
+                                    </div>
+                                    <div class="item-info">
+                                        <div class="author-username">
+                                            <p class="text"> <router-link :to="'/author/detail?user='+item.username">{{ item.username }}</router-link></p>
+                                        </div>
+                                        <div class="author-desc">
+                                            <p class="text">{{ item.aboutme }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <el-pagination
+                                    :current-page.sync="followedPage"
+                                    @current-change="handleFollowList('followed')"
+                                    :page-size="10"
+                                    :total="followedTotal"
+                                    :hide-on-single-page="true"
+                                    layout="total, prev, pager, next"
+                                ></el-pagination>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+                <div class="main-container-right">
+                    <div class="achievement-cont">
+                        <div class="achievement-title">
+                            <p>个人成就</p>
                         </div>
-                    </el-tab-pane>
-                </el-tabs>
+                        <div class="achievement-contain">
+                            <div class="author-level">
+                                <img src="../../assets/images/creator_entrance.png" alt="">
+                                <div class="level-text">
+                                    <p class="level">创作 等级 <span class="num">LV 1</span></p>
+                                    <p class="level-tips">创作小白</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
            </div>
        </div>
 
@@ -122,7 +190,7 @@ export default {
                 fixed: true,
                 // 真实的输出宽高
                 infoTrue: true,
-                fixedNumber: [8, 3]
+                fixedNumber: [10, 3]
             },
             downImg: '#',
             dialogEditImage: false,
@@ -143,6 +211,17 @@ export default {
             publishTotal: '',
             likePage: 1,
             likeTotal: '',
+
+            publishTab: false, // 发布文章第一次加载
+            likeTab: false, //  点赞文章第一次加载
+            followTab: false, //ta 关注的人
+            followedTab: false, // 关注 ta 的人
+            followList: [], 
+            followedList: [],
+            followPage: 1,
+            followedPage: 1,
+            followTotal: 0,
+            followedTotal: 0
         };
     },
     computed: {},
@@ -151,9 +230,9 @@ export default {
         this.username = this.$route.query.user == undefined ? this.$store.state.username : this.$route.query.user;
         this.hanldeGetAuthor();
         this.handleGetAuthorBlogs('recommend');
-        this.handleGetAuthorBlogs('publish');
-        this.handleGetAuthorBlogs('like');
-        window.addEventListener('scroll', this.handleScroll)
+        // this.handleGetAuthorBlogs('publish');
+        // this.handleGetAuthorBlogs('like');
+        window.addEventListener('scroll', this.handleScroll);
     },
     methods: {
         handleCancelEdit() {
@@ -254,6 +333,9 @@ export default {
             })
         },
         handleScroll() {
+            if(this.activeName == 'follow' || this.activeName == 'followed'){
+                return;
+            }
             if(this.timeout != null){
                 clearTimeout(this.timeout);
             }
@@ -271,9 +353,39 @@ export default {
                 }
             }, 500)
         },
-        handleTabClick() {
-            console.log(233)
-        }
+        handleFollowList(type){
+            this.$axios.post('/account/api/list/follow',
+                qs.stringify({
+                    type: type,
+                    username: this.userinfo.username,
+                    page: this[type+'Page'],
+                    size: 10
+                })
+            ).then(res=>{
+                if(res){
+                    this[type+'List'] = res.data.data;
+                    this[type+'Total'] = res.data.total;
+                }
+            })
+        },
+        handleTabClick(tab, event) {
+            if(this[tab.paneName+'Tab'] == false){
+                if(tab.paneName == 'follow' || tab.paneName == 'followed'){
+                    this.handleFollowList(tab.paneName)
+                }else{
+                    this.handleGetAuthorBlogs(tab.paneName);
+                }
+                this[tab.paneName+'Tab'] = true;
+            }
+        },
+        handleJumpAuthorDetail(username){
+            this.$router.push({
+                path: '/author/detail',
+                query: {
+                    user: username
+                }
+            })
+        },
     },
     created() {
 
@@ -292,11 +404,11 @@ export default {
     float: none;
 }
 .el-tabs__active-bar{
-    left: 276px;
+    left: 118px;
 }
 .author-detail{
     .author-cont{
-        width: 800px;
+        width: 1000px;
         padding-top: 50px;
         margin: 0px auto 30px;
         .author-header{
@@ -304,6 +416,7 @@ export default {
             background-size: 100% 100%;
             position: relative;
             border-radius: 8px;
+            box-shadow: 0 0 8px #b4b1b1;
             .author-name{
                 color: white;
                 position: absolute;
@@ -355,7 +468,7 @@ export default {
                 border-radius: 50%;
                 box-shadow: 0px 0px 6px #666;
                 position: absolute;
-                left: 340px;
+                left: 440px;
                 top: 30px;
                 img{
                     width: 100%;
@@ -364,11 +477,126 @@ export default {
                 }
             }
         }
+        .main-container{
+            display: flex;
+            justify-content: space-between;
+            .main-container-right{
+                width: 260px;
+                .achievement-cont{
+                    margin-top: 30px;
+                    .achievement-title{
+                        font-size: 14px;
+                        padding: 9px;
+                        border-bottom: 1.5px solid #bfb9b95e;
+                    }
+                    .achievement-contain{
+                        padding: 10px;
+                        .author-level{
+                            display: flex;
+                            img{
+                                height: 40px;
+                            }
+                            .level-tips{
+                                font-size: 12px;
+                                color: #909399e3;
+                            }
+                            .level-text{
+                                font-size: 14px;
+                                display: flex;
+                                align-items: flex-start;
+                                flex-direction: column;
+                                justify-content: center;
+                                .level{
+                                    font-weight: 700;
+                                    .num{
+                                        color: #3a8ee6
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         .author-blogs{
+            width: 700px;
             margin-top: 30px;
+            border: 1px solid #eee1e1d9;
+            padding: 0 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 7px #ccccccb8;
+            min-height: 500px;
             .waiting{
                 padding: 20px;
                 text-align: center;
+            }
+            .follow-item{
+                display: flex;
+                justify-content: flex-start;
+                padding: 18px;
+                text-align: left;
+                .item-avator{
+                    cursor: pointer;
+                    img{
+                        border-radius: 8px;
+                    }
+                }
+                .item-info{
+                    padding: 15px;
+                    .author-username{
+                        .text{
+                            font-weight: 700;
+                            font-size: 20px;
+                        }
+                    }
+                    .author-desc{
+                        width: 400px;
+                        .text{
+                            font-size: 13px;
+                            line-height: 18px;
+                            margin-top: 5px;
+                            word-wrap: break-word;
+                            display: -webkit-box;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 2;
+                            overflow: hidden;
+                        }
+                    }
+                }
+            }
+            .followed-item{
+                display: flex;
+                justify-content: flex-start;
+                padding: 18px;
+                text-align: left;
+                .item-avator{
+                    cursor: pointer;
+                    img{
+                        border-radius: 8px;
+                    }
+                }
+                .item-info{
+                    padding:15px;
+                    .author-username{
+                        .text{
+                            font-weight: 700;
+                            font-size: 20px;
+                        }
+                    }
+                    .author-desc{
+                        width: 400px;
+                        .text{
+                            font-size: 13px;
+                            line-height: 18px;
+                            margin-top: 5px;
+                            word-wrap: break-word;
+                            display: -webkit-box;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 2;
+                            overflow: hidden;
+                        }
+                    }
+                }
             }
         }
     }

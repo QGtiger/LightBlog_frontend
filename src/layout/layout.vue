@@ -46,6 +46,12 @@ export default {
   src: url('../assets/font/GoodVibrationsROB Script.ttf');
 }
 
+a{
+color: #525f6d;
+}
+a:hover{
+color:#18b0de
+}
 
 a:hover{
   transition: all .3s ease-out 0s;

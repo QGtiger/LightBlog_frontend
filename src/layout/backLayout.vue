@@ -129,7 +129,6 @@ html,body{
 }
 a {
   text-decoration: none;
-  color: #0066cc;
   cursor: pointer;
 }
 

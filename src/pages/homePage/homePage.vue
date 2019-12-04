@@ -168,9 +168,6 @@ export default {
     }
 }
 
-.home-page{
-    min-width: 1375px;
-}
 
 .blog-main-cont{
     width: 60%;

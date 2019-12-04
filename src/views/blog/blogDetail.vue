@@ -23,7 +23,10 @@
                         <div class="author-avator-right">
                             <div class="right-top">
                                 <span class="author-text" @click="handleJumpAuthorDetail(blogInfo.author)">{{ blogInfo.author }}</span>
-                                <!-- <span>123</span> -->
+                                <div class="follow-cont" v-if="blogInfo.author != $store.state.username" style="display: inline-block; float:right">
+                                    <span class="follow-author" v-if="!isFollow" @click="handleFollowAuthor">+ 关注</span>
+                                    <span class="follow-author" v-else @click="handleFollowAuthor">- 取消关注</span>
+                                </div>
                             </div>
                             <div class="right-bottom">
                                 <span class="meta-text">已发布了 {{ blogInfo.author_blogsCount }} 篇文章</span>
@@ -63,7 +66,8 @@ export default {
         return {
             blogId: '',
             body: '',
-            blogInfo: {}
+            blogInfo: {},
+            isFollow: false
         };
     },
     computed: {},
@@ -97,6 +101,7 @@ export default {
                     console.log(res.data)
                     this.blogInfo = res.data.data;
                     this.body = res.data.data.body
+                    this.isFollow = res.data.is_follow;
                 }
             })
         },
@@ -109,6 +114,20 @@ export default {
                 path: '/author/detail',
                 query: {
                     user: username
+                }
+            })
+        },
+        handleFollowAuthor() { //关注 用户
+            let type = this.isFollow ? 'notFollow' : 'follow';
+            this.$axios.post('/account/api/author/follow',
+                qs.stringify({
+                    follow: this.blogInfo.author,
+                    type: type
+                })
+            ).then(res => {
+                if(res){
+                    this.$message.success(this.isFollow ? '取消关注成功' : '关注成功')
+                    this.isFollow  = this.isFollow ? false : true;
                 }
             })
         }
@@ -166,6 +185,7 @@ export default {
                 padding-bottom: 10px;
                 border-bottom: 1px solid #96969670;
                 .author-avator-right{
+                    width: 100%;
                     height: 44px;
                     padding-left: 20px;
                     display: flex;
@@ -174,6 +194,16 @@ export default {
                     line-height: 22px;
                     .author-text{
                         cursor: pointer;
+                    }
+                    .follow-author{
+                        float: right;
+                        border: 1px solid #e46c0e;
+                        padding: 0px 15px;
+                        border-radius: 15px;
+                        font-size: 12px;
+                        font-weight: 700;
+                        cursor: pointer;
+                        color: #e46c0e;
                     }
                     .author-text:hover{
                         color: #777;
