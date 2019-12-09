@@ -58,7 +58,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="ta关注的人" name="follow">
                             <div class="follow-list">
-                                <div class="follow-item item" v-for="item in followList" :key="item.id">
+                                <div class="follow-item item" v-for="(item, index) in followList" :key="item.id">
                                     <div class="item-avator" @click="handleJumpAuthorDetail(item.username)">
                                         <img :src="item.url" :title="item.username" alt="">
                                     </div>
@@ -69,6 +69,10 @@
                                         <div class="author-desc">
                                             <p class="text">{{ item.aboutme }}</p>
                                         </div>
+                                    </div>
+                                    <div class="item-operate">
+                                        <span v-if="!item.is_follow" class="follow-btn" @click="handleFollowAuthor(item, index, 'follow')">关注</span>
+                                        <span v-else class="unfollow-btn" @mouseover="handleToggleText(item, index, 'follow')" @mouseout="handleToggleText(item, index, 'follow')" @click="handleFollowAuthor(item, index, 'follow')">{{ item.is_hover ? '取消关注' : '已关注' }}</span>
                                     </div>
                                 </div>
                                 <el-pagination
@@ -83,7 +87,7 @@
                         </el-tab-pane>
                         <el-tab-pane label="关注ta的人" name="followed">
                             <div class="followed-list">
-                                <div class="followed-item item" v-for="item in followedList" :key="item.id">
+                                <div class="followed-item item" v-for="(item, index) in followedList" :key="item.id">
                                     <div class="item-avator" @click="handleJumpAuthorDetail(item.username)">
                                         <img :src="item.url" :title="item.username" alt="">
                                     </div>
@@ -94,6 +98,10 @@
                                         <div class="author-desc">
                                             <p class="text">{{ item.aboutme }}</p>
                                         </div>
+                                    </div>
+                                    <div class="item-operate">
+                                        <span v-if="!item.is_follow" class="follow-btn" @click="handleFollowAuthor(item, index, 'followed')">关注</span>
+                                        <span v-else class="unfollow-btn" @mouseover="handleToggleText(item, index, 'followed')" @mouseout="handleToggleText(item, index, 'followed')" @click="handleFollowAuthor(item, index, 'followed')">{{ item.is_hover ? '取消关注' : '已关注' }}</span>
                                     </div>
                                 </div>
                                 <el-pagination
@@ -221,7 +229,9 @@ export default {
             followPage: 1,
             followedPage: 1,
             followTotal: 0,
-            followedTotal: 0
+            followedTotal: 0,
+
+            unfollowedText: '已关注', // 可以取消关注的文字显示
         };
     },
     computed: {},
@@ -233,6 +243,18 @@ export default {
         // this.handleGetAuthorBlogs('publish');
         // this.handleGetAuthorBlogs('like');
         window.addEventListener('scroll', this.handleScroll);
+        // $('body').on('mouseover', '.unfollow-btn', function(){
+        //     $(this).text('取消关注');
+        // })
+        // $('body').on('mouseout', '.unfollow-btn', function(){
+        //     $(this).text('已关注');
+        // })
+        // $('body').on('mouseover', '.follow-btn', function(){
+        //     $(this).text('确认关注');
+        // })
+        // $('body').on('mouseout', '.follow-btn', function(){
+        //     $(this).text('关注');
+        // })
     },
     methods: {
         handleCancelEdit() {
@@ -386,6 +408,26 @@ export default {
                 }
             })
         },
+        handleFollowAuthor(item, index, type){ //关注或者 取消关注
+            let follow_type = item.is_follow ? 'notFollow' : 'follow';
+            this.$axios.post('/account/api/author/follow',
+                qs.stringify({
+                    follow: item.username,
+                    type: follow_type
+                })
+            ).then(res => {
+                if(res){
+                    this.$message.success(item.is_follow ? '取消关注成功' : '关注成功');
+                    this[type+'List'][index].is_follow = item.is_follow ? false : true;
+                }
+            })
+        },
+        handleToggleText(item,index, type) {
+            // console.log(this[type+'List'][index].is_hover)
+            // this[type+'List'][index].is_hover = this[type+'List'][index].is_hover ? false : true;
+            item.is_hover = item.is_hover ? false : true;
+            this.$Vue.set(this[type+'List'], index, item);
+        }
     },
     created() {
 
@@ -531,18 +573,20 @@ export default {
                 text-align: center;
             }
             .follow-item{
+                height: 70px;
                 display: flex;
-                justify-content: flex-start;
+                justify-content: space-between;
                 padding: 18px;
                 text-align: left;
                 .item-avator{
                     cursor: pointer;
                     img{
                         border-radius: 8px;
+                        height: 100%;
                     }
                 }
                 .item-info{
-                    padding: 15px;
+                    padding: 5px 15px;
                     .author-username{
                         .text{
                             font-weight: 700;
@@ -565,18 +609,20 @@ export default {
                 }
             }
             .followed-item{
+                height: 70px;
                 display: flex;
-                justify-content: flex-start;
+                justify-content: space-between;
                 padding: 18px;
                 text-align: left;
                 .item-avator{
                     cursor: pointer;
                     img{
                         border-radius: 8px;
+                        height: 100%;
                     }
                 }
                 .item-info{
-                    padding:15px;
+                    padding:5px 15px;
                     .author-username{
                         .text{
                             font-weight: 700;
@@ -596,6 +642,40 @@ export default {
                             overflow: hidden;
                         }
                     }
+                }
+            }
+            .item-operate{
+                margin-left: 20px;
+                display: flex;
+                align-items: center;
+                .follow-btn{
+                    padding: 6px 0;
+                    display: inline-block;
+                    width: 98px;
+                    text-align: center;
+                    color: #ffffff;
+                    border-radius: 2px;
+                    cursor: pointer;
+                    background-color: #0084ff;
+
+                }
+                .follow-btn:hover{
+                    background-color: #0084ffcc;
+                    transition: all .3s ease-out 0s;
+                }
+                .unfollow-btn{
+                    padding: 6px 0;
+                    display: inline-block;
+                    width: 98px;
+                    text-align: center;
+                    color: #ffffff;
+                    border-radius: 2px;
+                    cursor: pointer;
+                    background-color: #909399;
+                }
+                .unfollow-btn:hover{
+                    background-color: #909399c4;
+                    transition: all .3s ease-out 0s;
                 }
             }
         }

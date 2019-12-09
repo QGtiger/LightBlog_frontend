@@ -16,11 +16,13 @@
            <div class="sec-panel-header"></div>
            <div class="recommendSpecialColumn">
                <div class="title">
-                   <p class="title-text">推荐专栏 <span class="tips">知识体系专栏，可通过专栏去系统学习某个知识点</span></p>
+                   <p class="title-text">推荐专栏 <span class="tips">知识体系专栏，可通过专栏去系统学习某个知识点</span>
+                    <router-link to="/column/list" class="show-all">查看全部 >></router-link>
+                   </p>
                </div>
                <div class="column-list">
                    <div class="column-item" v-for="item in columnList" :key="item.id">
-                       <div class="item-img">
+                       <div class="item-img" @click="handleJumpThemeList(item.id)">
                            <img :src="item.image_preview" :title="item.description" alt="">
                            <span>{{ item.specialColumnName }}</span>
                        </div>
@@ -146,6 +148,14 @@ export default {
                     this.columnList = res.data.data;
                 }
             })
+        },
+        handleJumpThemeList(id) { //跳转到专题下
+            this.$router.push({
+                path: '/theme/list',
+                query: {
+                    id
+                }
+            })
         }
     },
     created() {
@@ -175,6 +185,7 @@ export default {
     padding-top: 30px;
     margin: 0px auto;
     position: relative;
+    overflow: hidden;
     .main-cont-header{
         height: 300px;
         .banner-cont{
@@ -185,7 +196,6 @@ export default {
             overflow: hidden;
             box-shadow: 0 0 7px;
             img{
-                border-radius: 8px;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -208,6 +218,11 @@ export default {
             .title-text{
                 padding-bottom: 10px;
                 border-bottom: 1px solid #84808030
+            }
+            .show-all{
+                font-size: 12px;
+                padding: 3px 4px;
+                float: right;
             }
         }
         .column-list{

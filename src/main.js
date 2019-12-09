@@ -32,6 +32,7 @@ Vue.prototype.$axios=request;
 Vue.prototype.$ = $;
 Vue.prototype.$config = Config;
 Vue.prototype.$util = Util;
+Vue.prototype.$Vue = Vue;
 
 Vue.config.productionTip = false
 

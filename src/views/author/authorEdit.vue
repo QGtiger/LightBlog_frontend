@@ -147,6 +147,7 @@ export default {
             var file = this.$refs.selectImg.files[0]
             console.log(this.getObjectURL(file))
             this.cropper.img = this.getObjectURL(file);
+            this.$refs.selectImg.value = null;
             this.dialogEditImage = true;
         },
         handleCropperImage() {

@@ -48,12 +48,14 @@ service.interceptors.response.use(
       router.push('/login')
     }
     if(response.data.status == 402){
+      Message.closeAll()
       Message.error(response.data.tips)
       router.push('/login')
     }
     if(response.data.success){
       return response;
     }else{
+      Message.closeAll()
       Message.error(response.data.tips)
       return false;
     }

@@ -299,6 +299,8 @@ export default {
                 if(res){
                     this.columnList = res.data.data.columnList;
                     this.themeList = res.data.data.themeList;
+                    this.articleForm.columnId = this.$route.query.columnId === undefined ? '' : parseInt(this.$route.query.columnId);
+                    this.articleForm.themeId = this.$route.query.themeId === undefined ? '' : parseInt(this.$route.query.themeId);
                 }
             })
         },

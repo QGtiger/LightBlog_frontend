@@ -53,7 +53,17 @@ export default new Router({
         name: 'blog',
         component: () => import('@/views/blog/blogDetail.vue'),
         meta: { title: '文章详情' }
-      },]
+      },{
+        path: '/column/list',
+        name: 'columnList',
+        component: () => import('@/views/specialColumn/columnList'),
+        meta: { title: '专栏列表' }
+      },{
+        path: '/theme/list',
+        name: 'themeList',
+        component: () => import('@/views/specialTheme/themeList'),
+        meta: { title: '专题列表' }
+      }]
 
     },
     {
