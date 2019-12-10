@@ -471,7 +471,6 @@ export default {
                 display: inline-block;
                 border: 1px solid;
                 border-radius: 5px;
-                padding: 5px 10px;
                 color: hsla(0,0%,100%,.7);
                 border-color: hsla(0,0%,100%,.24);
                 position: absolute;
@@ -481,6 +480,8 @@ export default {
                 font-size: 15px;
                 label{
                     cursor: pointer;
+                    padding: 5px 10px;
+                    display: inline-block;
                 }
                 .hidden{
                     display: none;

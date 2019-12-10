@@ -80,6 +80,7 @@ export default {
       width: 76px;
       font-size: 12px;
       line-height: 36px;
+      list-style: none;
       cursor: pointer;
       text-align: center;
       position: relative;

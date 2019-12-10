@@ -2,12 +2,12 @@
   <div class="about">
     <h1>This is an about page</h1>
     <!-- <mark-down :initialValue="value" style="width: 1000px;" :theme="Github"/> -->
-    <mavon-editor v-model="value" ref="editor" @imgAdd="handleAddImg" @imgDel="handleDelImage"></mavon-editor>
+    <mavon-editor v-model="value" ref="editor" :toolbars="toolbars" @imgAdd="handleAddImg" @imgDel="handleDelImage"></mavon-editor>
     <el-button type="primary" @click="handleTest">显示内容console</el-button>
     <transition name="el-fade-in-linear">
       <mavon-editor
         class="md"
-        :value="value"
+        :value="valueEmoji"
         :subfield = "false"
         :defaultOpen = "'preview'"
         :toolbarsFlag = "false"
@@ -64,7 +64,21 @@ export default {
       img_file: {},
       valueEmoji: '',
       showEmoji: false,
-      data: []
+      data: [],
+      toolbars: {
+        blod: true,
+        italic: true,
+        underline: true,
+        strikethrough: true,
+        mark: true,
+        superscript: true,
+        subscript: true,
+        quote: true,
+        help: true,
+        emoji: true,
+        subfield: false,
+        defaultOpen: 'edit'
+      }
     }
   },
   methods: {

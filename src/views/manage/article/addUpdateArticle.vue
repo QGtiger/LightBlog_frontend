@@ -61,7 +61,7 @@
                </el-form>
            </div>
            <div class="mavon-editor">
-               <mavon-editor v-if="isUpdate" style="min-height:600px" v-model="articleForm.body" ref="editor" @imgAdd="handleAddImg" @imgDel="handleDelImage" @save="handleSave"></mavon-editor>
+               <mavon-editor v-if="isUpdate" style="min-height:600px" v-model="articleForm.bodyHtml" ref="editor" @imgAdd="handleAddImg" @imgDel="handleDelImage" @save="handleSave"></mavon-editor>
                <div class="meta-footer">
                    <el-button type="primary" @click="handlePublishArticle">确认</el-button>
                    <el-button @click="handleCancelPublishArticle">取消</el-button>
@@ -201,7 +201,7 @@ export default {
                 columnId: '',
                 themeId: '',
                 personalColumnId: '',
-                body: ''
+                bodyHtml: ''
             },
             showUploadBtn: false,
             dialogImage: false,
@@ -299,8 +299,8 @@ export default {
                 if(res){
                     this.columnList = res.data.data.columnList;
                     this.themeList = res.data.data.themeList;
-                    this.articleForm.columnId = this.$route.query.columnId === undefined ? '' : parseInt(this.$route.query.columnId);
-                    this.articleForm.themeId = this.$route.query.themeId === undefined ? '' : parseInt(this.$route.query.themeId);
+                    this.articleForm.columnId = this.$route.query.columnId === undefined ? this.articleForm.columnId : parseInt(this.$route.query.columnId);
+                    this.articleForm.themeId = this.$route.query.themeId === undefined ? this.articleForm.themeId : parseInt(this.$route.query.themeId);
                 }
             })
         },
@@ -317,7 +317,7 @@ export default {
             this.$refs.articleForm.validate(valid => {
                 if(valid){
                     if(this.isUpdate){
-                        if(this.articleForm.body.replace(/(^\s*)|(\s*$)/g, "") === ''){
+                        if(this.articleForm.bodyHtml.replace(/(^\s*)|(\s*$)/g, "") === ''){
                             this.$message.warning('文章正文不能为空哦~~');
                             return;
                         }
@@ -330,8 +330,8 @@ export default {
                             specialColumnId: this.articleForm.columnId,
                             specialThemeId: this.articleForm.themeId,
                             personalColumnId: this.articleForm.personalColumnId,
-                            body: this.emoji(this.articleForm.body),
-                            body_html: this.articleForm.body,
+                            body: this.articleForm.bodyHtml,
+                            body_html: this.articleForm.bodyHtml,
                             isUpdateImg: this.isUpdateImg,
                             previewImg: coverImageBlob
                         }
@@ -431,8 +431,8 @@ export default {
                             specialColumnId: this.articleForm.columnId,
                             specialThemeId: this.articleForm.themeId,
                             personalColumnId: this.articleForm.personalColumnId,
-                            body: this.articleForm.body,
-                            body_html: this.$refs.editor.d_render,
+                            body: this.articleForm.bodyHtml,
+                            body_html: this.articleForm.bodyHtml,
                             isUpdateImg: this.isUpdateImg,
                             previewImg: coverImageBlob
                         }

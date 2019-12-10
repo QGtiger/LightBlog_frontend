@@ -3,6 +3,34 @@
    <div class='blog-detail'>
        <div class="blog-cont">
             <div class="markdown-cont">
+                <el-breadcrumb style="padding: 25px;background-color: rgb(251, 251, 251);" separator-class="el-icon-arrow-right">
+                    <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{ path: '/theme/list', query: {id: blogInfo.specialColumnId} }">{{ blogInfo.specialColumn }}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{ blogInfo.specialTheme }}</el-breadcrumb-item>
+                </el-breadcrumb>
+                <div class="blog-header">
+                    <div class="blog-title">
+                        <h1>{{ blogInfo.title }}</h1>
+                    </div>
+                    <div class="blog-author">
+                        <div class="avator">
+                            <router-link :to="{ path: '/author/detail', query: { user: blogInfo.author } }"><img :src="blogInfo.author_url" alt="233"></router-link>
+                            
+                        </div>
+                        <div class="author-info">
+                            <p><router-link :to="{ path: '/author/detail', query: { user: blogInfo.author } }">{{ blogInfo.author }}</router-link></p>
+                            <p class="tips-footer">
+                                <span class="create-time">{{ $util.Time.getAllTime(blogInfo.updated) }}</span>
+                                &nbsp;&nbsp;
+                                <span class="word-count">字数: {{handleNumToThousands(blogInfo.wordCount)}}</span>
+                                &nbsp;&nbsp;
+                                <span class="read-count">阅读数: {{handleNumToThousands(blogInfo.scanCount)}}</span>
+                                &nbsp;&nbsp;
+                                <span class="like-count">点赞数: {{handleNumToThousands(blogInfo.usersLike)}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <mavon-editor
                     class="md"
                     :value="body"
@@ -12,6 +40,7 @@
                     :editable="false"
                     :scrollStyle="true"
                     :ishljs = "true"
+                    :boxShadow = "false"
                 ></mavon-editor>
             </div>
             <div class="fixed-box">
@@ -37,7 +66,7 @@
                         <span>本篇文章字数 {{ blogInfo.wordCount }}</span>
                         <span>阅读数: {{ blogInfo.scanCount }} 人 </span>
                         <span>点赞数: {{ blogInfo.usersLike }} 人 </span>
-                        <span>基本介绍: {{ blogInfo.description }}</span>
+                        <span style="word-break: break-word;">基本介绍: {{ blogInfo.description }}</span>
                         <span>更新时间: {{ $util.Time.getAllTime(blogInfo.updated) }}</span>
                     </div>
                     <div class="recommendBlogsList">
@@ -54,20 +83,58 @@
                     </div>
                 </div>
             </div>
+            <div class="comment-page-cont">
+                <div class="comment-editor">
+                    <img :src="this.$store.state.avatorUrl" alt="">
+                    <div class="editor-cont">
+                        <div class="editor-body">
+                            <textarea class="editor" v-model="commentText" @focus="handleFocusTextarea"></textarea>
+                        </div>
+                        <div class="editor-footer">
+                            <transition name="el-fade-in-linear">
+                                <div class="meta" v-if="isShowCommentBtn">
+                                    <i style="font-size: 26px;padding:10px;display: inline-block;cursor:pointer;" class="iconfont" @click="handleShowEmoji">&#xe745;</i>
+                                    <div class="btn-list">
+                                        <button class="confirm-comment" :class="{ confirm_hover :  commentText != ''}" @click="handleConfirmComment" :disabled="commentText == ''">发布</button>
+                                        <button class="cancel-comment" @click="handleCancelComment">取消</button>
+                                    </div>
+                                    <transition name="el-fade-in-linear" mode="">
+                                        <div class="emoji-box" v-if="showEmoji" >
+                                            <i class="iconfont cancel-btn" @click="showEmoji = false">&#xe63a;</i>
+                                        
+                                            <vue-emoji
+                                            @select="selectEmoji">
+                                            </vue-emoji>
+                                        <span class="pop-arrow arrow"></span>
+                                        </div>       
+                                    </transition>
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+                </div>
+            </div>
        </div>
    </div>
 </template>
 
 <script>
 import qs from 'qs';
+import vueEmoji from '@/components/emoji/emoji.vue';
 export default {
-    components: {},
+    components: {
+        vueEmoji
+    },
     data() {
         return {
             blogId: '',
             body: '',
             blogInfo: {},
-            isFollow: false
+            isFollow: false,
+
+            commentText: '', //评论文字
+            isShowCommentBtn: false,//是否显示评论按钮,
+            showEmoji: false, //是否显示emoji
         };
     },
     computed: {},
@@ -130,6 +197,33 @@ export default {
                     this.isFollow  = this.isFollow ? false : true;
                 }
             })
+        },
+        handleNumToThousands(num){
+            var str = (num || 0).toString();
+            var result = '';
+            while(str.length > 3){
+                result = ','+str.slice(-3) + result;
+                str = str.slice(0, str.length - 3)
+            }
+            if(str){
+                result = str + result;
+            }
+            return result;
+        },
+        handleFocusTextarea(){
+            this.isShowCommentBtn = true;
+        },
+        handleCancelComment() {
+            this.isShowCommentBtn = false;
+        },
+        handleShowEmoji() {
+            this.showEmoji = true;
+        },
+        selectEmoji(code){
+            this.commentText += code;
+        },
+        handleConfirmComment() {
+            console.log(213)
         }
     },
     created() {
@@ -160,10 +254,148 @@ export default {
         padding-top: 40px;
         margin: 0px auto;
         position: relative;
+        .comment-page-cont{
+            margin-top: 30px;
+            width: calc(100% - 330px);
+            .comment-editor{
+                padding: 20px 0px 20px 30px;
+                img{
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 100%;
+                    box-shadow: 2px 2px 7px #808080;
+                    float: left;
+                }
+                .editor-cont{
+                    padding-left: 90px;
+                    padding-top: 25px;
+                    .editor-body{
+                        position: relative;
+                    }
+                    textarea{
+                        padding: 12px 16px;
+                        width: calc(100% - 30px);
+                        height: 90px;
+                        font-size: 15px;
+                        border: 1px solid #eee;
+                        border-radius: 4px;
+                        background-color: #eee;
+                        resize: none;
+                        display: inline-block;
+                        vertical-align: top;
+                        outline-style: none;
+                        border-radius: 4px;
+                    }
+                    .editor-body::before{
+                        content: '';
+                        position: absolute;
+                        top: 0px;
+                        left: -16px;
+                        border: 10px solid transparent;
+                        border-right: 10px solid #eee;
+                        border-top: 10px solid #eee;
+                    }
+                    .editor-footer{
+                        .meta{
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            .cancel-comment{
+                                display: inline-block;
+                                padding: 5px 15px;
+                                border-radius: 10px;
+                                border: 1px solid #ccc;
+                                color: #a1a1a1;
+                                cursor: pointer;
+                                transition: all .4s;
+                            }
+                            .cancel-comment:hover{
+                                background-color: #eee;
+                                transition: all .4s;
+                            }
+                            .confirm-comment{
+                                display: inline-block;
+                                padding: 5px 15px;
+                                border-radius: 10px;
+                                border: 1px solid #f56c6c73;
+                                color: #f5f7fa;
+                                background-color: #f56c6ccc;
+                                cursor: pointer;
+                                margin-right: 10px;
+                                transition: all .4s;
+                            }
+                            .confirm_hover:hover{
+                                background-color: #f56c6c;
+                                transition: all .4s;
+                            }
+                        }
+                    }
+                    .emoji-box{
+                        position: absolute;
+                        z-index: 10;
+                        left: -10px;
+                        top: 44px;
+                        -webkit-box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.2);
+                        box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.2);
+                        background: white;
+                        .cancel-btn {
+                            position: absolute;
+                            border: none;
+                            color: #FF4949;
+                            right: 5px;
+                            top: 5px;
+                            z-index: 10;
+                            padding: 10px;
+                            transition: all .4s;
+                            border-radius: 7px;
+                            cursor: pointer;
+                        }
+                        .cancel-btn:hover{
+                            background-color: #eee;
+                            transition: all .4s;
+                        }
+                    }
+                }
+            }
+        }
 
         .markdown-cont{
             width: calc(100% - 330px);
             min-width: 600px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            .blog-header{
+                background-color: rgb(251, 251, 251);
+                .blog-title{
+                    h1{
+                        padding-left: 25px;
+                        font-size: 40px;
+                    }
+                }
+                .blog-author{
+                    margin-top: 20px;
+                    padding-left: 25px;
+                    padding-bottom: 10px;
+                    display: flex;
+                    .avator{
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 100%;
+                        overflow: hidden;
+                        img{
+                            width: 100%;
+                        }
+                    }
+                    .author-info{
+                        margin-left: 10px;
+
+                        .tips-footer{
+                            font-size: 13px;
+                            color: #909399d4;
+                        }
+                    }
+                }
+            }
         }
 
         .markdown-meta-right{

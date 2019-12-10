@@ -182,8 +182,8 @@ export default {
 .blog-main-cont{
     width: 60%;
     min-width: 1100px;
-    padding-top: 30px;
-    margin: 0px auto;
+    padding: 10px;
+    margin: 30px auto;
     position: relative;
     overflow: hidden;
     .main-cont-header{

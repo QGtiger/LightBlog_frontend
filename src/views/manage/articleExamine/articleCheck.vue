@@ -35,7 +35,7 @@
            <div class="mavon-editor">
                <mavon-editor
                 class="md"
-                :value="articleForm.body"
+                :value="articleForm.bodyHtml"
                 :subfield = "false"
                 :defaultOpen = "'preview'"
                 :toolbarsFlag = "false"
@@ -130,7 +130,7 @@ export default {
                 previewImg: [{url:''}],
                 columnName: '',
                 themeName: '',
-                body: '',
+                bodyHtml: '',
                 bodyHtml: ''
             },
             dialogShowCheck: false,
