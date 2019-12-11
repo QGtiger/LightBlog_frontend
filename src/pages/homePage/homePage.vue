@@ -91,6 +91,7 @@ export default {
         this.handleGetMostViews();
         this.handleGetSpecialColumn();
         this.handleBannerList();
+        console.log(this.$store.state.username)
     },
     methods: {
         handleBannerList(){ //获取Banner

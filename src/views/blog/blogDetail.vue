@@ -88,7 +88,17 @@
                     <img :src="this.$store.state.avatorUrl" alt="">
                     <div class="editor-cont">
                         <div class="editor-body">
-                            <textarea class="editor" v-model="commentText" @focus="handleFocusTextarea"></textarea>
+                            <textarea ref="commentEditor" rows="8" class="editor" v-model="commentText" @focus="handleFocusTextarea"></textarea>
+                            <div class="editor-meta-footer">
+                                <div class="f-right">
+                                    <i title="预览" @click="handleShowPreviewComment" class="preview-btn iconfont">&#xe605;</i>
+                                </div>
+                            </div>
+                            <transition name="staggered-fade" :css="false" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+                                <div class="preview-cont" v-if="isShowPreviewComment">
+                                    <div v-html="emoji(commentText)"></div>
+                                </div>
+                            </transition>
                         </div>
                         <div class="editor-footer">
                             <transition name="el-fade-in-linear">
@@ -121,6 +131,8 @@
 <script>
 import qs from 'qs';
 import vueEmoji from '@/components/emoji/emoji.vue';
+import  Velocity from 'velocity-animate';
+
 export default {
     components: {
         vueEmoji
@@ -135,6 +147,7 @@ export default {
             commentText: '', //评论文字
             isShowCommentBtn: false,//是否显示评论按钮,
             showEmoji: false, //是否显示emoji
+            isShowPreviewComment: false, //是否 预览 评论
         };
     },
     computed: {},
@@ -215,15 +228,50 @@ export default {
         },
         handleCancelComment() {
             this.isShowCommentBtn = false;
+            this.commentText = '';
+            this.isShowPreviewComment = false;
         },
         handleShowEmoji() {
             this.showEmoji = true;
         },
         selectEmoji(code){
-            this.commentText += code;
+            let strList = this.commentText.split('');
+            let selectionStart = this.$refs.commentEditor.selectionStart;
+            strList.splice(selectionStart, 0, code);
+            this.commentText = strList.join('');
+            this.showEmoji = false;
         },
         handleConfirmComment() {
-            console.log(213)
+            console.log(this.commentText.slice(-1))
+        },
+        handleShowPreviewComment() {
+            this.isShowPreviewComment = this.isShowPreviewComment ? false : true;
+        },
+
+        beforeEnter(el){
+            el.style.opacity = 0;
+            
+        },
+        enter(el, done){
+            var delay = el.dataset.index * 150;
+            setTimeout(()=>{
+                Velocity(
+                    el,
+                    { opacity: 1 },
+                    { complete: done }
+                )
+            }, delay)
+            
+        },
+        leave(el, done){
+            var delay = el.dataset.index * 150;
+            setTimeout(()=>{
+                Velocity(
+                    el,
+                    { opacity: 0, height: '0px' },
+                    { complete: done }
+                )
+            }, delay)
         }
     },
     created() {
@@ -271,26 +319,62 @@ export default {
                     padding-top: 25px;
                     .editor-body{
                         position: relative;
+                        box-shadow: rgb(161, 161, 161) 4px 4px 6px;
+                        background-color: #eee;
+                        border-radius: 6px;
+                        padding-bottom: 15px;
+                        .editor-meta-footer{
+                            display: flex;
+                            justify-content: flex-end;
+                            padding: 7px 0;
+                            margin: 0 16px;
+                            .f-right{
+                                margin-right: 5px;
+                                .preview-btn{
+                                    color: rgb(128, 128, 128);
+                                    font-size: 20px;
+                                    padding: 5px;
+                                    cursor: pointer;
+                                    transition: all .3s ease-in 0s;
+                                }
+                                .preview-btn:hover{
+                                    color: #303133;
+                                    transition: all .3s ease-in 0s;
+                                }
+                            }
+                        }
+                        .preview-cont{
+                            padding: 0px 15px;
+                            div{
+                                word-break: break-word;
+                                white-space: pre-wrap;
+                            }
+                            img{
+                                vertical-align: bottom;
+                            }
+                        }
                     }
                     textarea{
                         padding: 12px 16px;
-                        width: calc(100% - 30px);
-                        height: 90px;
-                        font-size: 15px;
-                        border: 1px solid #eee;
-                        border-radius: 4px;
-                        background-color: #eee;
+                        width: calc(100% - 32px);
+                        // height: 90px;
+                        font-size: 16px;
+                        border:none;
+                        outline: none;
+                        background-color: transparent;
                         resize: none;
                         display: inline-block;
                         vertical-align: top;
                         outline-style: none;
-                        border-radius: 4px;
+                        // overflow: hidden;
+                        overflow-wrap: break-word;
+                        font-family: none;
                     }
                     .editor-body::before{
                         content: '';
                         position: absolute;
                         top: 0px;
-                        left: -16px;
+                        left: -17px;
                         border: 10px solid transparent;
                         border-right: 10px solid #eee;
                         border-top: 10px solid #eee;
@@ -307,11 +391,14 @@ export default {
                                 border-radius: 10px;
                                 border: 1px solid #ccc;
                                 color: #a1a1a1;
+                                background-color: #eee;
                                 cursor: pointer;
+                                outline: none;
                                 transition: all .4s;
                             }
                             .cancel-comment:hover{
-                                background-color: #eee;
+                                background-color: #ccc;
+                                color: #303133;
                                 transition: all .4s;
                             }
                             .confirm-comment{
@@ -321,9 +408,13 @@ export default {
                                 border: 1px solid #f56c6c73;
                                 color: #f5f7fa;
                                 background-color: #f56c6ccc;
-                                cursor: pointer;
+                                cursor: not-allowed;
+                                outline: none;
                                 margin-right: 10px;
                                 transition: all .4s;
+                            }
+                            .confirm_hover{
+                                cursor: pointer;
                             }
                             .confirm_hover:hover{
                                 background-color: #f56c6c;

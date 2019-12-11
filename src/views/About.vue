@@ -1,7 +1,21 @@
 <template>
   <div class="about">
     <h1>This is an about page</h1>
+
+  <div class="comment-test" style="margin: 100px auto;">
+    <lb-comments :currentUser="this.$store.state.username"></lb-comments>
+  </div>
+
+    <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+      <span>123123123213</span>
+    </el-tooltip>
     <!-- <mark-down :initialValue="value" style="width: 1000px;" :theme="Github"/> -->
+  <button v-on:click="show = !show">
+    Toggle
+  </button>
+  <transition name="staggered-fade" :css="false" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+    <p v-if="show">hello</p>
+  </transition>
     <mavon-editor v-model="value" ref="editor" :toolbars="toolbars" @imgAdd="handleAddImg" @imgDel="handleDelImage"></mavon-editor>
     <el-button type="primary" @click="handleTest">显示内容console</el-button>
     <transition name="el-fade-in-linear">
@@ -52,7 +66,11 @@
 </template>
 <script>
 import request from '@/utils/request';
-import vueEmoji from '@/components/emoji/emoji.vue'
+import vueEmoji from '@/components/emoji/emoji.vue';
+import  Velocity from 'velocity-animate';
+import LBComments from '@/components/LBComments';
+
+
 
 export default {
   components: {
@@ -78,7 +96,9 @@ export default {
         emoji: true,
         subfield: false,
         defaultOpen: 'edit'
-      }
+      },
+
+      show: false,
     }
   },
   methods: {
@@ -103,9 +123,37 @@ export default {
     submit () {
       this.data.push(this.valueEmoji)
       this.valueEmoji = ''
+    },
+
+    beforeEnter(el){
+      console.log(el)
+      el.style.opacity = 0;
+      el.style.height = 0;
+    },
+    enter(el, done){
+      console.log(el,done);
+      var delay = el.dataset.index * 150;
+      setTimeout(()=>{
+        Velocity(
+          el,
+          { opacity: 1, height: '1.6em' },
+          { complete: done }
+        )
+      }, delay)
+    },
+    leave(el, done){
+      var delay = el.dataset.index * 150;
+      setTimeout(()=>{
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        )
+      }, delay)
     }
   },
   mounted() {
+    console.log(this.$store.state.username)
   }
 }
 </script>
@@ -121,7 +169,6 @@ ul{
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin: 60px auto ;
-  width: 500px;
   .icon {
     position: relative;
     margin-top: 20px;

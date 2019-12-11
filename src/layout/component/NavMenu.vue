@@ -7,7 +7,11 @@
                     博客首页
                 </router-link>
             </el-menu-item>
-            <el-menu-item index="2">聊天室</el-menu-item>
+            <el-menu-item index="2">
+                <router-link to="/about">
+                    聊天室
+                </router-link>
+            </el-menu-item>
             <el-submenu class="username-cont" index="3" style="float: right;width: 100px">
                 <template slot="title">
                     <el-avatar :src="this.$store.state.avatorUrl"></el-avatar>

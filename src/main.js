@@ -14,7 +14,10 @@ import Config from './config';
 import '@/assets/css/iconfont.css';
 import request from '@/utils/request';
 import {VueCropper} from 'vue-cropper';
-import { emoji } from './utils/emoji.js'
+import { emoji } from './utils/emoji.js';
+import LBComments from '@/components/LBComments';
+
+Vue.use(LBComments)
 
 Vue.prototype.emoji = emoji
 

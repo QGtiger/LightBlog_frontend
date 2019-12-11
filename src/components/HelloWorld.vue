@@ -44,7 +44,7 @@ export default {
 <style scoped lang="less">
 @font-face{
   font-family: MainFont;
-  src: url(../assets/font/GoodVibrationsROB Script.ttf);
+  src: url('../assets/font/GoodVibrationsROB Script.ttf');
 }
 
 .title-cont .title{
