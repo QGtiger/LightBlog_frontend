@@ -1,14 +1,22 @@
 <!-- 评论组合 -->
 <template>
    <div class="comment-list">
-        <div class='comment-item' v-for="item in commentsList" :key="item.id">
-            <div class="LBComment--RootComment">
-                <comments-item :currentUser="currentUser" :comment="item.comment_root"></comments-item>
+       <transition-group tag="div" name="list">
+           <div class='comment-item' v-for="(item,index) in commentsList" :key="index">
+                <div class="LBComment--RootComment">
+                    <comments-item
+                    @clickThumb="handleRootThumb"
+                    @clickDel="handleDekRootCom"
+                    :currentUser="currentUser" :comment="item.comment_root"></comments-item>
+                </div>
+                <div class="child-comment-items">
+                    <div class="LBComment--ChildComment" v-for="reply in item.comment_reply" :key="reply.id">
+                        <reply-item :currentUser="currentUser" :comment="reply"></reply-item>
+                    </div>
+                </div>
             </div>
-            <div class="LBComment--ChildComment" v-for="reply in item.comment_reply" :key="reply.id">
-                <reply-item :currentUser="currentUser" :comment="reply"></reply-item>
-            </div>
-        </div>
+        </transition-group>
+        
    </div>
 </template>
 
@@ -35,7 +43,7 @@ export default {
                             created: 1568268265,
                             comment_like: 233,
                             comment_text: '只是一段简单的测试 :smiley:',
-                            is_liked: false
+                            is_liked: true
                         },
                         comment_reply: [
                             {
@@ -45,7 +53,8 @@ export default {
                                 id: 1,
                                 comment_text: '子评论对主评论的评论',
                                 created: 1568268265,
-                                comment_like: 67
+                                comment_like: 67,
+                                is_liked: false,
                             },
                             {
                                 from: 'lightfish',
@@ -54,7 +63,8 @@ export default {
                                 id:2,
                                 comment_text: '子评论对子评论的评论',
                                 created: 1568268365,
-                                comment_like: 56
+                                comment_like: 56,
+                                is_liked: false,
                             }
                         ]
                     }
@@ -76,10 +86,25 @@ export default {
     computed: {},
     watch: {},
     mounted() {
-        console.log(this.currentUser)
+        
     },
     methods: {
-
+        handleRootThumb(type){
+            console.log(type)
+        },
+        handleDekRootCom(id){
+            console.log(id)
+            this.$axios.post('/comment/api/comment/del',
+                this.$qs.stringify({
+                    commentId: id,
+                    commentType: 1
+                })
+            ).then(res=>{
+                if(res){
+                    console.log(res)
+                }
+            })
+        }
     },
     created() {
 
@@ -89,5 +114,16 @@ export default {
 </script>
 <style lang='less' scoped>
 //@import url(); 引入公共css类
+.child-comment-items{
+    padding-left: 40px;
+}
 
+.fade-enter-active, .fade-leave-active { transition: opacity .5s; }
+.fade-enter, .fade-leave-active { opacity: 0; }
+.fade-move { transition: transform .4s; }
+
+.list-enter-active, .list-leave-active { transition: all .5s; }
+.list-enter, .list-leave-active { opacity: 0; transform: translateX(30px); }
+.list-leave-active { position: absolute !important; }
+.list-move { transition: all .5s;}
 </style>

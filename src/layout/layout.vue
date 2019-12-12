@@ -46,6 +46,10 @@ export default {
   src: url('../assets/font/GoodVibrationsROB Script.ttf');
 }
 
+.el-textarea__inner{
+  resize: none;
+}
+
 a{
 color: #525f6d;
 }

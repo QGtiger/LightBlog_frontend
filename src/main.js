@@ -16,10 +16,12 @@ import request from '@/utils/request';
 import {VueCropper} from 'vue-cropper';
 import { emoji } from './utils/emoji.js';
 import LBComments from '@/components/LBComments';
+import  qs from 'qs';
 
 Vue.use(LBComments)
 
 Vue.prototype.emoji = emoji
+Vue.prototype.$qs = qs;
 
 
 Vue.use(VueCropper)

@@ -3,18 +3,31 @@
     <h1>This is an about page</h1>
 
   <div class="comment-test" style="margin: 100px auto;">
-    <lb-comments :currentUser="this.$store.state.username"></lb-comments>
+    <lb-comments
+     :currentUser="this.$store.state.username"></lb-comments>
   </div>
+
+  
 
     <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
       <span>123123123213</span>
     </el-tooltip>
+
+    
+
+    <el-popconfirm
+      title="这是一段内容确定删除吗？"
+      @onConfirm="handleTestPopConfirm"
+      :confirmButtonText="'233'"
+    >
+      <span slot="reference">删除</span>
+    </el-popconfirm>
     <!-- <mark-down :initialValue="value" style="width: 1000px;" :theme="Github"/> -->
   <button v-on:click="show = !show">
     Toggle
   </button>
   <transition name="staggered-fade" :css="false" @before-enter="beforeEnter" @enter="enter" @leave="leave">
-    <p v-if="show">hello</p>
+    <p v-if="show">hellon\nasda asdsad<br/>asdasd<br/>asdasdsad<br/>asdasd<br/>asdasdasd</p>
   </transition>
     <mavon-editor v-model="value" ref="editor" :toolbars="toolbars" @imgAdd="handleAddImg" @imgDel="handleDelImage"></mavon-editor>
     <el-button type="primary" @click="handleTest">显示内容console</el-button>
@@ -68,7 +81,6 @@
 import request from '@/utils/request';
 import vueEmoji from '@/components/emoji/emoji.vue';
 import  Velocity from 'velocity-animate';
-import LBComments from '@/components/LBComments';
 
 
 
@@ -150,10 +162,13 @@ export default {
           { complete: done }
         )
       }, delay)
-    }
+    },
+    handleTestPopConfirm(){
+      console.log(111111)
+    },
   },
   mounted() {
-    console.log(this.$store.state.username)
+    
   }
 }
 </script>
@@ -168,7 +183,6 @@ ul{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin: 60px auto ;
   .icon {
     position: relative;
     margin-top: 20px;
@@ -228,4 +242,8 @@ ul{
 .list-enter, .list-leave-active { opacity: 0; transform: translateX(30px); }
 .list-leave-active { position: absolute !important; }
 .list-move { transition: all .5s;}
+
+.el-popconfirm__main{
+  margin: 14px 0;
+}
 </style>

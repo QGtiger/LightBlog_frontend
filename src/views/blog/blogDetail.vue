@@ -123,6 +123,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="comment-pagination-cont">
+                    <lb-comments
+                        :currentUser="this.$store.state.username"
+                        :commentsList="commentsList"
+                        ></lb-comments>
+                </div>
             </div>
        </div>
    </div>
@@ -147,7 +153,10 @@ export default {
             commentText: '', //评论文字
             isShowCommentBtn: false,//是否显示评论按钮,
             showEmoji: false, //是否显示emoji
-            isShowPreviewComment: false, //是否 预览 评论
+            isShowPreviewComment: false, //是否 预览 评论,
+
+            currentPage: 1, //评论
+            commentsList: [], //评论列表
         };
     },
     computed: {},
@@ -169,8 +178,21 @@ export default {
                 $('.fixed-box').removeClass('fixed-css')
             }
         });
+        this.handleGetComments();
     },
     methods: {
+        handleGetComments(){
+            this.$axios.post('/comment/api/comment/get?page='+this.currentPage,
+                this.$qs.stringify({
+                    blogId: this.blogId
+                })
+            ).then(res=>{
+                if(res){
+                    console.log(res.data.data)
+                    this.commentsList.push(...res.data.data)
+                }
+            })
+        },
         handleGetBlogDetail() {
             this.$axios.post('/article/api/detail/blog',
                 qs.stringify({
@@ -178,7 +200,6 @@ export default {
                 })
             ).then(res => {
                 if(res){
-                    console.log(res.data)
                     this.blogInfo = res.data.data;
                     this.body = res.data.data.body
                     this.isFollow = res.data.is_follow;
@@ -230,6 +251,7 @@ export default {
             this.isShowCommentBtn = false;
             this.commentText = '';
             this.isShowPreviewComment = false;
+            this.showEmoji = false;
         },
         handleShowEmoji() {
             this.showEmoji = true;
@@ -242,7 +264,22 @@ export default {
             this.showEmoji = false;
         },
         handleConfirmComment() {
-            console.log(this.commentText.slice(-1))
+            this.$axios.post('/comment/api/comment/post', 
+                this.$qs.stringify({
+                    blogId: this.blogId,
+                    commentatorName: this.$store.state.username,
+                    commentText: this.commentText
+                })
+            ).then(res=>{
+                if(res){
+                    this.$message.success('感谢你的评论');
+                    this.commentsList.unshift({
+                        comment_root: res.data.data,
+                        comment_reply: []
+                    })
+                    this.handleCancelComment();
+                }
+            })
         },
         handleShowPreviewComment() {
             this.isShowPreviewComment = this.isShowPreviewComment ? false : true;
@@ -448,6 +485,9 @@ export default {
                         }
                     }
                 }
+            }
+            .comment-pagination-cont{
+                margin-top: 30px;
             }
         }
 

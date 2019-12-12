@@ -1,9 +1,8 @@
-import CommentsItem from './packages/comment-item/index.js';
+// import CommentsItem from './packages/comment-item/index.js';
 
 import LBComments from './main';
 
 const components = [
-    CommentsItem,
     LBComments
 ]
 
@@ -22,6 +21,5 @@ export default {
     version: '1.0.1',
     name: 'LBComments',
     install,
-    CommentsItem,
     LBComments
 }
