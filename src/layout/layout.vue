@@ -46,6 +46,15 @@ export default {
   src: url('../assets/font/GoodVibrationsROB Script.ttf');
 }
 
+.body-cont{
+  margin-bottom: 40px;
+}
+
+
+.el-popconfirm__main{
+  margin: 14px 0;
+}
+
 .el-textarea__inner{
   resize: none;
 }

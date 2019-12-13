@@ -1,22 +1,40 @@
 <!-- 评论组合 -->
 <template>
    <div class="comment-list">
-       <transition-group tag="div" name="list">
+       <div class="topBar">
+           <p class="topBar-title">
+               <i class="iconfont commentIcon">&#xe60c;</i>
+               <span class="text">评论{{ commentsCount }}</span>
+           </p>
+       </div>
+       <transition-group name="el-fade-in-linear">
            <div class='comment-item' v-for="(item,index) in commentsList" :key="index">
                 <div class="LBComment--RootComment">
                     <comments-item
-                    @clickThumb="handleRootThumb"
-                    @clickDel="handleDekRootCom"
+                    @childComment="handleChildComment"
+                    :index="index"
                     :currentUser="currentUser" :comment="item.comment_root"></comments-item>
                 </div>
                 <div class="child-comment-items">
                     <div class="LBComment--ChildComment" v-for="reply in item.comment_reply" :key="reply.id">
-                        <reply-item :currentUser="currentUser" :comment="reply"></reply-item>
+                        <reply-item
+                        @addComment="handleAddChildComment"
+                        :index="index"
+                        :currentUser="currentUser" :comment="reply"></reply-item>
                     </div>
+                </div>
+                <div class="more_reply">
+                    <span v-if="item.comment_reply_more" @click="handleGetMoreReply(item.comment_root.id, index)">查看全部 {{ item.total_comment_reply }} 条评论</span>
                 </div>
             </div>
         </transition-group>
-        
+        <el-pagination
+        :current-page.sync="page"
+        @current-change="handleCommentPage"
+        :page-size="size"
+        :total="total"
+        layout="total, prev, pager, next"
+        ></el-pagination>
    </div>
 </template>
 
@@ -66,7 +84,9 @@ export default {
                                 comment_like: 56,
                                 is_liked: false,
                             }
-                        ]
+                        ],
+                        comment_reply_more: false,
+                        total_comment_reply: 3,
                     }
                 ]
             }
@@ -76,11 +96,35 @@ export default {
             default() {
                 return '';
             }
+        },
+        commentsCount: {
+            type: Number,
+            default(){
+                return 0;
+            }
+        },
+        total: {
+            type: Number,
+            default() {
+                return 31;
+            }
+        },
+        size: {
+            type: Number,
+            default() {
+                return 10;
+            }
+        },
+        currentPage: {
+            type: Number,
+            default() {
+                return 1;
+            }
         }
     },
     data() {
         return {
-
+            page: this.currentPage,
         };
     },
     computed: {},
@@ -89,19 +133,24 @@ export default {
         
     },
     methods: {
-        handleRootThumb(type){
-            console.log(type)
+        handleChildComment(index, data){
+            this.commentsList[index].comment_reply.unshift(data);
         },
-        handleDekRootCom(id){
-            console.log(id)
-            this.$axios.post('/comment/api/comment/del',
+        handleAddChildComment(index, data){
+            this.commentsList[index].comment_reply.unshift(data);
+        },
+        handleCommentPage() {
+            this.$emit('pageChange', this.page)
+        },
+        handleGetMoreReply(id,index) {
+            this.$axios.post('/comment/api/comment_reply/more', 
                 this.$qs.stringify({
-                    commentId: id,
-                    commentType: 1
+                    commentId: id
                 })
             ).then(res=>{
                 if(res){
-                    console.log(res)
+                    this.commentsList[index].comment_reply.push(...res.data.data);
+                    this.commentsList[index].comment_reply_more = false;
                 }
             })
         }
@@ -116,6 +165,47 @@ export default {
 //@import url(); 引入公共css类
 .child-comment-items{
     padding-left: 40px;
+}
+
+.more_reply{
+    margin-bottom: 10px;
+    span{
+        display: inline-block;
+        padding: 5px 15px;
+        width: 100%;
+        cursor: pointer;
+        text-align: center;
+        transition: all .3s linear 0s;
+        color: #606266e6;
+    }
+    span:hover{
+        color: #3a8ee6;
+    }
+}
+
+.comment-list{
+    .topBar{
+        .topBar-title{
+            border-left: 5px solid #e65611;
+            padding: 0 15px;
+            margin: 20px 0;
+            font-weight: 700;
+            font-size: 23px;
+            font-family: cursive;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            display: flex;
+            align-items: flex-end;
+            .commentIcon{
+                font-size: 23px;
+            }
+            .text{
+                padding: 0 15px;
+            }
+        }
+    }
 }
 
 .fade-enter-active, .fade-leave-active { transition: opacity .5s; }

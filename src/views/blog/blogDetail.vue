@@ -85,7 +85,7 @@
             </div>
             <div class="comment-page-cont">
                 <div class="comment-editor">
-                    <img :src="this.$store.state.avatorUrl" alt="">
+                    <img class="commentator-avator" :src="this.$store.state.avatorUrl" alt="">
                     <div class="editor-cont">
                         <div class="editor-body">
                             <textarea ref="commentEditor" rows="8" class="editor" v-model="commentText" @focus="handleFocusTextarea"></textarea>
@@ -127,6 +127,10 @@
                     <lb-comments
                         :currentUser="this.$store.state.username"
                         :commentsList="commentsList"
+                        :commentsCount="commentExtra.comments_count"
+                        :total="total"
+                        :size="size"
+                        @pageChange="handleChangeCommentPage"
                         ></lb-comments>
                 </div>
             </div>
@@ -156,7 +160,11 @@ export default {
             isShowPreviewComment: false, //是否 预览 评论,
 
             currentPage: 1, //评论
+            total: 0,
+            size: 10,
             commentsList: [], //评论列表
+
+            commentExtra: {}, //评论 extra
         };
     },
     computed: {},
@@ -178,20 +186,37 @@ export default {
                 $('.fixed-box').removeClass('fixed-css')
             }
         });
-        this.handleGetComments();
+        this.handleGetComments(this.currentPage);
+        this.handleCommentExtra();
     },
     methods: {
-        handleGetComments(){
-            this.$axios.post('/comment/api/comment/get?page='+this.currentPage,
+        handleCommentExtra(){
+            this.$axios.post('/comment/api/comment/extra',
+                this.$qs.stringify({
+                    blogId: this.blogId
+                })
+            ).then(res=>{
+                if(res){
+                    this.commentExtra = res.data.data;
+                    console.log(res)
+                }
+            })
+        },
+        handleGetComments(page){
+            this.$axios.post('/comment/api/comment/get?page='+page+'&size='+this.size,
                 this.$qs.stringify({
                     blogId: this.blogId
                 })
             ).then(res=>{
                 if(res){
                     console.log(res.data.data)
-                    this.commentsList.push(...res.data.data)
+                    this.commentsList = res.data.data;
+                    this.total = res.data.total;
                 }
             })
+        },
+        handleChangeCommentPage(page){
+            this.handleGetComments(page);
         },
         handleGetBlogDetail() {
             this.$axios.post('/article/api/detail/blog',
@@ -317,7 +342,7 @@ export default {
     activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
 </script>
-<style lang='less' scoped>
+<style lang='less'>
 //@import url(); 引入公共css类
 @media screen and (max-width: 1290px){
     .fixed-css{
@@ -332,7 +357,6 @@ export default {
 }
 
 .blog-detail{
-    min-width: 1270px;
     .blog-cont{
         width: 80%;
         min-width: 1000px;
@@ -344,7 +368,7 @@ export default {
             width: calc(100% - 330px);
             .comment-editor{
                 padding: 20px 0px 20px 30px;
-                img{
+                .commentator-avator{
                     width: 60px;
                     height: 60px;
                     border-radius: 100%;
@@ -488,6 +512,11 @@ export default {
             }
             .comment-pagination-cont{
                 margin-top: 30px;
+                .comment-list{
+                    border: 1px solid #dcdfe6;
+                    padding: 20px 35px;
+                    border-radius: 4px;
+                }
             }
         }
 

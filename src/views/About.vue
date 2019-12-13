@@ -243,7 +243,4 @@ ul{
 .list-leave-active { position: absolute !important; }
 .list-move { transition: all .5s;}
 
-.el-popconfirm__main{
-  margin: 14px 0;
-}
 </style>

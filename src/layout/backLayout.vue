@@ -144,4 +144,9 @@ a {
 .el-upload-list--picture-card .el-upload-list__item-thumbnail{
     object-fit: cover;
 }
+
+
+.el-popconfirm__main{
+  margin: 14px 0;
+}
 </style>

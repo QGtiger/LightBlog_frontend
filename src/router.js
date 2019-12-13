@@ -63,6 +63,11 @@ export default new Router({
         name: 'themeList',
         component: () => import('@/views/specialTheme/themeList'),
         meta: { title: '专题列表' }
+      },{
+        path: '/theme/blog/:id',
+        name: 'themeBlog',
+        component: () => import('@/views/specialTheme/themeBlog'),
+        meta: { title: '专题文章' }
       }]
 
     },

@@ -16,7 +16,7 @@
                <div class="comment-time">
                    <span class="tips">{{ $util.Time.getFormatTime(comment.created) }}</span>
                </div>
-               <div class="comment-content" v-html="emoji(comment.comment_text)">
+               <div class="comment-content" :class="{ comment_deleted: comment.is_deleted }" v-html="emoji(comment.comment_text)">
                </div>
                <div class="comment-meta">
                    <div :class="{thumb: !comment.is_liked, thumbed: comment.is_liked }" @click="handleThumb">
@@ -25,7 +25,7 @@
                    </div>
                    <div class="enter-meta" :class="{LBCommentHover: isHover }">
                        <div class="l-btn" style="display: flex;">
-                           <div class="comment-btn" @click="handleShowInput">
+                           <div class="comment-btn" @click="handleShowInput" v-if="comment.from !== currentUser">
                                 <i class="iconfont iconfont-btn reply-btn">&#xe616;</i>
                                 <span class="iconfont-text">{{ isShowInput ? '取消回复' : '回复' }}</span>
                             </div>
@@ -34,7 +34,7 @@
                                 <span class="iconfont-text">举报</span>
                             </div>
                        </div>
-                       <div class="r-content"  v-if="comment.from === currentUser">
+                       <div class="r-content"  v-if="comment.from === currentUser  && comment.is_deleted !== true">
                            <el-popconfirm
                                 title="确定删除该评论 ？"
                                 @onConfirm="handleConfirmDeleteComment"
@@ -102,6 +102,7 @@ export default {
                     created: 1568268265,
                     comment_like: 67,
                     is_like: false,
+                    is_deleted: false,
                 }
             }
         },
@@ -109,6 +110,12 @@ export default {
             type: String,
             default() {
                 return '';
+            }
+        },
+        index: {
+            type: Number,
+            default() {
+                return 0;
             }
         }
     },
@@ -131,14 +138,38 @@ export default {
     },
     methods: {
         handleConfirmDeleteComment() {
-            console.log('shanchu ');
             this.isHover = false;
+            this.$axios.post('/comment/api/comment/del',
+                this.$qs.stringify({
+                    commentId: this.comment.id,
+                    commentType: 2
+                })
+            ).then(res=>{
+                if(res){
+                    this.$message.closeAll();
+                    this.$message.success('删除成功');
+                    this.comment.is_deleted = true;
+                    this.comment.comment_text = res.data.tips;
+                }
+            })
         },
         handleCancelDel() {
             this.isHover = false;
         },
         handleThumb() {
-            this.$emit('clickThumb', this.comment.is_liked ? 'unlike' : 'like')
+            this.$axios.post('/comment/api/comment/like',
+                this.$qs.stringify({
+                    commentId: this.comment.id,
+                    commentType: 1
+                })
+            ).then(res=>{
+                if(res){
+                    this.comment.is_liked = this.comment.is_liked ? false : true;
+                    this.comment.comment_like = res.data.like_count;
+                    this.$message.closeAll();
+                    this.$message.success('感谢您的点赞 ^-^');
+                }
+            })
         },
         handleMouseOver() {
             this.isHover = true;
@@ -158,11 +189,28 @@ export default {
             this.showEmoji = true;
         },
         handleConfirmComment() {
-            console.log(this.$refs.commentEditor.$el.querySelector('textarea').selectionStart)
+            // console.log(this.$refs.commentEditor.$el.querySelector('textarea').selectionStart)
+            this.$axios.post('/comment/api/comment_reply/post',
+                this.$qs.stringify({
+                    commentType: 2,
+                    commentId: this.comment.id,
+                    commentText: this.commentText,
+                    
+                })
+            ).then(res=>{
+                if(res){
+                    this.$message.closeAll();
+                    this.$message.success('感谢您的评论');
+                    this.$emit('addComment',this.index, res.data.data);
+                    this.handleCancelComment();
+                }
+            })
         },
         handleCancelComment() {
             this.isShowCommentBtn = false;
+            this.showEmoji = false;
             this.commentText = '';
+            this.isShowInput = false;
         },
         selectEmoji(code){
             let strList = this.commentText.split('');
@@ -245,9 +293,11 @@ export default {
         .comment-content{
             word-break:break-word;
             line-height: 22px;
-            text-indent: 10px;
             margin-top: 10px;
             white-space: pre-wrap;
+        }
+        .comment_deleted{
+            color: #a1a1a1;
         }
         .comment-meta{
             display: flex;

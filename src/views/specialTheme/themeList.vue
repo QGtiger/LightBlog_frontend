@@ -10,17 +10,20 @@
        </div>
        <div class="theme-list">
            <el-row :gutter="20">
-               <el-col :sm="24" :md="12" :lg="12" :xl="12" v-for="item in themeList" :key="item.id">
+               <el-col :sm="24" :md="12" :lg="12" :xl="12" v-for="item in themeList" :key="item.specialThemeId">
                    <div class="theme-item">
                        <div class="item-top">
                            <div class="item-thumb">
-                                <a href="" target="_blank">
+                                <a :href="'/theme/blog/'+item.specialThemeId" target="_blank">
                                     <img :src="item.preview" alt="null">
                                 </a>
                             </div>
                             <div class="item-cont">
                                 <div class="item-title">
-                                    <p>{{ item.specialTheme }}</p>
+                                    <a :href="'/theme/blog/'+item.specialThemeId" target="_blank">
+                                        <p>{{ item.specialTheme }}</p>
+                                    </a>
+                                    <!-- <p>{{ item.specialTheme }}</p> -->
                                 </div>
                                 <div class="item-desc">
                                     <p>{{ item.description }}</p>
