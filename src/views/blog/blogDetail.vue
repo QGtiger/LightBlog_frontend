@@ -6,7 +6,8 @@
                 <el-breadcrumb style="padding: 25px;background-color: rgb(251, 251, 251);" separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ path: '/theme/list', query: {id: blogInfo.specialColumnId} }">{{ blogInfo.specialColumn }}</el-breadcrumb-item>
-                    <el-breadcrumb-item>{{ blogInfo.specialTheme }}</el-breadcrumb-item>
+                    <el-breadcrumb-item :to="{path: '/theme/blog/'+blogInfo.specialThemeId}">{{ blogInfo.specialTheme }}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{ blogInfo.title }}</el-breadcrumb-item>
                 </el-breadcrumb>
                 <div class="blog-header">
                     <div class="blog-title">
