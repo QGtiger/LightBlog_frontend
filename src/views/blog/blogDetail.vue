@@ -290,6 +290,10 @@ export default {
             this.showEmoji = false;
         },
         handleConfirmComment() {
+            if(this.commentText.replace(/(^\s*) | (\s*$)/g, '').length === 0){
+                this.$message.warning('评论内容不能为空');
+                return;
+            }
             this.$axios.post('/comment/api/comment/post', 
                 this.$qs.stringify({
                     blogId: this.blogId,

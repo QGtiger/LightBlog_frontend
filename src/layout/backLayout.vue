@@ -60,9 +60,14 @@ html,body{
 
 }
 
+.drawer-result{
+    margin: 20px 40px;
+}
 
 #app .wrap{
-    height: 100%
+    height: 100%;
+    .body-cont {
+    }
 }
 .body-cont .nav{
     float: left;
@@ -72,8 +77,6 @@ html,body{
     border-right: solid 1px #e6e6e6;
 }
 
-.body-cont {
-}
 
 .body-cont .container{
     float: left;

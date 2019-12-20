@@ -279,7 +279,4 @@ export default {
         }
     }
 }
-.drawer-result{
-    margin: 20px 40px;
-}
 </style>

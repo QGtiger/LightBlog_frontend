@@ -175,6 +175,36 @@ export default new Router({
       }]
     },
     {
+      path: '/report',
+      name: 'report',
+      component: LayoutManage,
+      redirect: '/report/blog',
+      children: [{
+        path: 'blog',
+        component: () => import('@/views/manage/report/blogReport'),
+        meta: { title: '文章检举' }
+      },{
+        path: 'comment',
+        component: () => import('@/views/manage/report/commentReport'),
+        meta: { title: '评论检举' }
+      },{
+        path: 'type',
+        component: () => import('@/views/manage/report/typeReport'),
+        meta: { title: '文章配置' }
+      }]
+    },
+    {
+      path: '/lblogauthor',
+      name: 'lblogauthor',
+      component: LayoutManage,
+      redirect: '/lblogauthor/list',
+      children: [{
+        path: 'list',
+        component: () => import('@/views/manage/author/authorList'),
+        meta: { title: '用户管理' }
+      }]
+    },
+    {
       path: '/banner',
       name: 'banner',
       component: LayoutManage,

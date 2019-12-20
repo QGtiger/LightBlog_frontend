@@ -64,8 +64,20 @@
                 :index="indexMethod"
                 
                ></el-table-column>
-               <el-table-column label="文章标题" prop="title"></el-table-column>
-               <el-table-column label="文章简介" prop="description"></el-table-column>
+               <el-table-column label="文章标题" width="120">
+                   <template v-slot="scope">
+                       <div>
+                           <p :title="scope.row.title" class="line-clamp">{{ scope.row.title }}</p>
+                       </div>
+                   </template>
+               </el-table-column>
+               <el-table-column label="文章简介" width="120">
+                   <template v-slot="scope">
+                       <div>
+                           <p :title="scope.row.description" class="line-clamp">{{ scope.row.description }}</p>
+                       </div>
+                   </template>
+               </el-table-column>
                <el-table-column label="所属专栏" prop="specialColumn"></el-table-column>
                <el-table-column label="所属专题" prop="specialTheme"></el-table-column>
                <!-- <el-table-column label="创建时间">
@@ -77,9 +89,9 @@
                <el-table-column label="审核时间">
                    <template slot-scope="scope">{{ scope.row.checked ? $util.Time.getAllTime(scope.row.checked):'--' }}</template>
                </el-table-column>
-               <el-table-column label="是否上推荐">
+               <el-table-column label="是否上推荐" width="100">
                    <template v-slot="scope">
-                       <div>
+                       <div style="text-align:center;">
                            <span class="is-recommend" v-if="scope.row.isRecommend">是</span>
                            <span v-else>否</span>
                        </div>
@@ -278,7 +290,7 @@ export default {
     }
 }
 </script>
-<style lang='less' scoped>
+<style lang='less'>
 //@import url(); 引入公共css类
 .article-examine{
     .examine-cont{
@@ -298,6 +310,12 @@ export default {
             .detail{
                 cursor: pointer;
                 color:#bf0000;
+            }
+            .line-clamp{
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                word-wrap: break-word; 
             }
         }
     }

@@ -53,7 +53,7 @@
 
            <transition name="staggered-fade" :css="false" @before-enter="beforeEnter" @enter="enter" @leave="leave">
                <div class="comment-input" v-if="isShowInput">
-                    <el-input class="comment-textarea" ref="commentEditor" type="textarea" @focus="isShowCommentBtn=true" :autosize="{ minRows: 3, maxRows: 8 }" v-model="commentText"></el-input>
+                    <el-input class="comment-textarea" ref="commentEditor" type="textarea" @focus="isShowCommentBtn=true" :autosize="{ minRows: 3, maxRows: 4 }" v-model="commentText"></el-input>
                     <div class="editor-footer">
                             <transition name="el-fade-in-linear">
                                 <div class="meta" v-if="isShowCommentBtn">
