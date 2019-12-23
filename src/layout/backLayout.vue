@@ -66,8 +66,6 @@ html,body{
 
 #app .wrap{
     height: 100%;
-    .body-cont {
-    }
 }
 .body-cont .nav{
     float: left;
@@ -110,6 +108,13 @@ html,body{
   cursor: pointer;
   margin-right: 5px;
 }
+
+.table .detail{
+  color: #3a8ee6;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
 .table .up {
   color: #079c00;
   cursor: pointer;

@@ -59,6 +59,10 @@ export default {
   resize: none;
 }
 
+textarea{
+  resize: none;
+}
+
 a{
 color: #525f6d;
 }

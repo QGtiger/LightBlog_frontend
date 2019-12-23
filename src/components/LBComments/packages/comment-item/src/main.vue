@@ -27,7 +27,7 @@
                                 <i class="iconfont iconfont-btn reply-btn">&#xe616;</i>
                                 <span class="iconfont-text">{{ isShowInput ? '取消回复' : '回复' }}</span>
                             </div>
-                            <div class="report-btn">
+                            <div class="report-btn" @click="handleReportComment" v-if="!comment.is_deleted && comment.commentator !== currentUser">
                                 <i class="iconfont iconfont-btn report-icon">&#xe656;</i>
                                 <span class="iconfont-text">举报</span>
                             </div>
@@ -83,10 +83,11 @@
 
 <script>
 import vueEmoji from '@/components/emoji/emoji.vue';
+
 export default {
     name: 'CommentsItem',
     components: {
-        vueEmoji
+        vueEmoji,
     },
     props: {
         comment: {
@@ -241,6 +242,9 @@ export default {
                     { complete: done }
                 )
             }, delay)
+        },
+        handleReportComment(){
+            this.$emit('comment-report', this.comment.id, 1)
         }
     },
     created() {

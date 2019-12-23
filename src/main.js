@@ -12,6 +12,7 @@ import 'mavon-editor/dist/css/index.css';
 import Util from './utils/utils';
 import Config from './config';
 import '@/assets/css/iconfont.css';
+import '@/assets/js/iconfont/iconfont.js';
 import request from '@/utils/request';
 import {VueCropper} from 'vue-cropper';
 import { emoji } from './utils/emoji.js';

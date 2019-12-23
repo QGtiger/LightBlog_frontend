@@ -3,6 +3,11 @@
    <div class='blog-detail'>
        <div class="blog-cont">
             <div class="markdown-cont">
+                <span class="svg-container" v-if="blogInfo.isRecommend">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icontuijian-right"></use>
+                    </svg>
+                </span>
                 <el-breadcrumb style="padding: 25px;background-color: rgb(251, 251, 251);" separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ path: '/theme/list', query: {id: blogInfo.specialColumnId} }">{{ blogInfo.specialColumn }}</el-breadcrumb-item>
@@ -529,6 +534,13 @@ export default {
             width: calc(100% - 330px);
             min-width: 600px;
             box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
+            .svg-container{
+                position: absolute;
+                right: -4px;
+                top: -5px;
+                font-size: 40px;
+            }
             .blog-header{
                 background-color: rgb(251, 251, 251);
                 .blog-title{

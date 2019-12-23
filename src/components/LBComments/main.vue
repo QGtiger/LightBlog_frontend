@@ -12,6 +12,7 @@
                 <div class="LBComment--RootComment">
                     <comments-item
                     @childComment="handleChildComment"
+                    @comment-report="handleCommentReport"
                     :index="index"
                     :currentUser="currentUser" :comment="item.comment_root"></comments-item>
                 </div>
@@ -19,6 +20,7 @@
                     <div class="LBComment--ChildComment" v-for="reply in item.comment_reply" :key="reply.id">
                         <reply-item
                         @addComment="handleAddChildComment"
+                        @comment-report="handleCommentReport"
                         :index="index"
                         :currentUser="currentUser" :comment="reply"></reply-item>
                     </div>
@@ -35,18 +37,26 @@
         :total="total"
         layout="total, prev, pager, next"
         ></el-pagination>
+        <report-dialog :showDialog="showDialog"
+            @cancel-edit="handleCancelReport"
+            @confirm-report="handleConfirmReport"
+            :reportTypeList="reportTypeList"
+            ref="reportDialog"
+        ></report-dialog>
    </div>
 </template>
 
 <script>
 import CommentsItem from './packages/comment-item/index.js';
 import ReplyItem from './packages/replay-item/index.js';
+import reportDialog from './dialogReport';
 
 export default {
     name: 'LbComments',
     components: {
         CommentsItem,
-        ReplyItem
+        ReplyItem,
+        reportDialog
     },
     props: {
         commentsList: {
@@ -125,12 +135,17 @@ export default {
     data() {
         return {
             page: this.currentPage,
+            showDialog: false,
+            reportTypeList: [],
+
+            isReportRootComment: true,
+            commentId: '',
         };
     },
     computed: {},
     watch: {},
     mounted() {
-        
+        this.handleReportTypeList();
     },
     methods: {
         handleChildComment(index, data){
@@ -151,6 +166,39 @@ export default {
                 if(res){
                     this.commentsList[index].comment_reply.push(...res.data.data);
                     this.commentsList[index].comment_reply_more = false;
+                }
+            })
+        },
+        handleCommentReport(id, type) {
+            this.isReportRootComment = type === 1 ? true : false;
+            this.commentId = id;
+            this.showDialog = true;
+        },
+        handleCancelReport(){
+            this.showDialog = false;
+        },
+        handleReportTypeList(){
+            this.$axios.post('/comment/api/report/config/get', 
+                
+            ).then(res=>{
+                if(res){
+                    this.reportTypeList = res.data.data;
+                }
+            })
+        },
+        handleConfirmReport(data){
+            console.log(data)
+            this.$axios.post('/comment/api/comment/report',
+                this.$qs.stringify({
+                    type: this.isReportRootComment ? 1 : 2,
+                    commentId:  this.commentId,
+                    reportId: data.reportId,
+                    reportText: data.reportText
+                })
+            ).then(res=>{
+                if(res){
+                    this.$message.success('举报成功');
+                    this.$refs.reportDialog.handleCancelEdit();
                 }
             })
         }

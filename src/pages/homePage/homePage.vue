@@ -250,10 +250,6 @@ export default {
                         object-fit: cover;
                         border-radius: 5px;
                     }
-                    img:hover{
-                        transform: scale(1.1);
-                        transition: all .3s ease-out;
-                    }
                     span{
                         position: absolute;
                         left: 0;
@@ -273,6 +269,10 @@ export default {
                         background: linear-gradient(180deg,transparent,rgba(0,0,0,.5));
                         transition: all .3s ease-out;
                     }
+                }
+                .item-img:hover img{
+                    transform: scale(1.1);
+                    transition: all .3s ease-out;
                 }
             }
         }

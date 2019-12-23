@@ -4,8 +4,11 @@
        <div class="theme-header">
             <div class="title">
                 <p class="title-text">
-                    {{ columnName }} 专题
+                    {{ columnName }} 专栏
                 </p>
+            </div>
+            <div class="title-desc">
+                {{ columnDesc }}
             </div>
        </div>
        <div class="theme-list">
@@ -53,7 +56,8 @@ export default {
             themeList: [],
             columnId: '',
             themeId: '',
-            columnName: ''
+            columnName: '',
+            columnDesc: '',
         };
     },
     computed: {},
@@ -74,6 +78,7 @@ export default {
                 if(res){
                     this.themeList = res.data.data;
                     this.columnName = res.data.columnName;
+                    this.columnDesc = res.data.columnDesc;
                 }
             })
         },
@@ -85,7 +90,7 @@ export default {
             }else{
                 let initData = [];
                 initData.push(...list);
-                for(var i = len; i < 3; i++){item
+                for(var i = len; i < 3; i++){
                     initData[i] = {title: '虚左以待', url:'/article/add?themeId='+item.specialThemeId+'&columnId='+item.specialColumnId}
                 }
                 return initData;
@@ -121,7 +126,7 @@ export default {
         .title{
             .title-text{
                 text-align: center;
-                font-family: TitleFont;
+                font-family: monospace;
                 font-size: 30px;
                 padding: 100px 0 10px 0;
                 font-weight: 600;
@@ -131,12 +136,20 @@ export default {
             .title-text::after{
                     content: '';
                     display: inline-block;
-                    width: 80px;
+                    width: 120px;
                     position: absolute;
                     border: 1px solid;
                     bottom: 0;
-                    left: calc(50% - 40px);
+                    left: calc(50% - 60px);
             }
+            
+        }
+        .title-desc{
+            color: #fff;
+            font-family: cursive;
+            width: 420px;
+            margin: 20px auto;
+            text-align: center;
         }
     }
     .theme-list{
@@ -155,14 +168,20 @@ export default {
             }
             .item-thumb{
                 width: 200px;
+                height: 145px;
                 float: left;
+                overflow: hidden;
+                border-radius: 5px;
                 img{
                     width: 100%;
-                    height: 140px;
+                    height: 100%;
                     object-fit: cover;
-                    border-radius: 4px;
                     box-shadow: 2px 2px 3px #dcdfe6;
+                    transition: all .3s;
                 }
+            }
+            .item-thumb:hover img{
+                transform: scale(1.05);
             }
             .item-cont{
                 margin-left: 220px;

@@ -121,14 +121,20 @@ export default {
             position: relative;
             .item-thumb{
                 width: 200px;
+                height: 150px;
                 float: left;
+                overflow: hidden;
+                border-radius: 5px;
                 img{
                     width: 100%;
-                    height: 140px;
+                    height: 100%;
                     object-fit: cover;
-                    border-radius: 4px;
                     box-shadow: 2px 2px 3px #dcdfe6;
+                    transition: all .3s;
                 }
+            }
+            .item-thumb:hover img{
+                transform: scale(1.05);
             }
             .item-cont{
                 margin-left: 220px;
