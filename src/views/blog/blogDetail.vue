@@ -547,6 +547,7 @@ export default {
                     h1{
                         padding-left: 25px;
                         font-size: 40px;
+                        font-family: fantasy;
                     }
                 }
                 .blog-author{

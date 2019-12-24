@@ -12,6 +12,11 @@
            <el-row :gutter="20">
                <el-col :sm="24" :md="24" :lg="12" :xl="12" v-for="item in columnList" :key="item.id">
                    <div class="column-item">
+                       <span class="svg-container" v-if="item.isRecommend">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icontuijian1"></use>
+                            </svg>
+                        </span>
                        <div class="item-thumb">
                            <a :href="'/theme/list?id='+item.id" target="_blank">
                                <img :src="item.preview" alt="null">
@@ -119,6 +124,12 @@ export default {
             overflow: hidden;
             transition: all .6s ease-out 0s;
             position: relative;
+            .svg-container{
+                position: absolute;
+                right: 0;
+                font-size: 38px;
+                top: -2px;
+            }
             .item-thumb{
                 width: 200px;
                 height: 150px;

@@ -187,7 +187,6 @@ export default {
             })
         },
         handleConfirmReport(data){
-            console.log(data)
             this.$axios.post('/comment/api/comment/report',
                 this.$qs.stringify({
                     type: this.isReportRootComment ? 1 : 2,

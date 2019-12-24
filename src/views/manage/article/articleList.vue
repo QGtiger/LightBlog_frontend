@@ -4,9 +4,53 @@
        <Title title="文章列表"></Title>
        <div class="search-cont">
            <div class="search-form">
-               <el-form :inline="true" :model="searchForm" ref="searchForm">
-                   <el-form-item label="文章标题">
+               <el-form :inline="true" :model="searchForm" ref="searchForm" label-width="100">
+                   <el-form-item label="文章标题:">
                        <el-input v-model="searchForm.articleName"></el-input>
+                   </el-form-item>
+                   <el-form-item label="发布状态:">
+                       <el-select v-model="searchForm.status">
+                           <el-option label="全部" value=""></el-option>
+                           <el-option
+                            v-for="(item, index) in statusList"
+                            :key="index"
+                            :label="item.label"
+                            :value="item.value"
+                           ></el-option>
+                       </el-select>
+                   </el-form-item>
+                   <el-form-item label="所属专栏">
+                       <el-select v-model="searchForm.specialColumn" @change="handleChangeColumn">
+                           <el-option label="全部" value=""></el-option>
+                           <el-option
+                            v-for="item in specialColumnList"
+                            :key="item.id"
+                            :label="item.columnName"
+                            :value="item.id"
+                           ></el-option>
+                       </el-select>
+                   </el-form-item>
+                   <el-form-item label="所属专题">
+                       <el-select v-model="searchForm.specialTheme">
+                           <el-option label="全部" value=""></el-option>
+                           <el-option
+                            v-for="item in specialThemeList[searchForm.specialColumn]"
+                            :key="item.id"
+                            :label="item.themeName"
+                            :value="item.id"
+                           ></el-option>
+                       </el-select>
+                   </el-form-item>
+                   <el-form-item label="所属个人栏目">
+                       <el-select v-model="searchForm.personalColumn">
+                           <el-option label="全部" value=""></el-option>
+                           <el-option
+                            v-for="item in personalColumnList"
+                            :key="item.id"
+                            :label="item.columnName"
+                            :value="item.id"
+                           ></el-option>
+                       </el-select>
                    </el-form-item>
                    <el-form-item>
                        <el-button type="primary" @click="handleSearchArticle">搜索</el-button>
@@ -117,9 +161,23 @@ export default {
     },
     data() {
         return {
+            statusList:[
+                {label: '已发布', value: 3},
+                {label: '待审核', value: 1},
+                {label: '已驳回', value: 2},
+                {label: '未发布', value: 0}
+            ],
             searchForm: {
                 articleName: '',
+                status: '',
+                specialColumn: '',
+                specialTheme: '',
+                personalColumn: '',
             },
+            specialColumnList: [],
+            specialThemeList: [],
+            personalColumnList: [],
+
             articleList: [],
             currentPage: 1,
             size: 10,
@@ -138,10 +196,33 @@ export default {
     watch: {},
     mounted() {
         this.handleGetArticleList();
+        this.handleGetColumnTheme();
+        this.handleGetColumnList();
     }, 
     methods: {
         handleSearchArticle() { //搜索文章
-
+            this.currentPage = 1;
+            this.handleGetArticleList();
+        },
+        handleGetColumnTheme(){ //获取专栏和专题
+            this.$axios.post('/article/api/get/columnTheme').then(res=>{
+                if(res){
+                    this.specialColumnList = res.data.data.columnList;
+                    this.specialThemeList = res.data.data.themeList;
+                }
+            })
+        },
+        handleGetColumnList() {
+            this.$axios.post('/article/api/get/personal_column?page=1&size=1000',
+                qs.stringify({
+                    status: '',
+                    columnName: ''
+                })
+            ).then(res => {
+                if(res){
+                    this.personalColumnList = res.data.data;
+                }
+            })
         },
         indexMethod(index) {
             return index + 1 + (this.currentPage - 1)*this.size;
@@ -155,7 +236,9 @@ export default {
             })
         },
         handleGetArticleList() { //获取文章
-            this.$axios.post('/article/api/get/articlelist?page='+this.currentPage+'&size='+this.size).then(res=>{
+            this.$axios.post('/article/api/get/articlelist?page='+this.currentPage+'&size='+this.size,
+                this.$qs.stringify(this.searchForm)
+            ).then(res=>{
                 if(res){
                     this.articleList = res.data.data;
                     this.total = res.data.total;
@@ -248,6 +331,9 @@ export default {
                     id
                 }
             })
+        },
+        handleChangeColumn() {
+            this.searchForm.specialTheme = '';
         }
     },
     created() {

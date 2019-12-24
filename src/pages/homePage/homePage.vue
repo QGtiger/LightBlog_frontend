@@ -249,6 +249,7 @@ export default {
                         height: 100%;
                         object-fit: cover;
                         border-radius: 5px;
+                        transition: all .3s ease-out;
                     }
                     span{
                         position: absolute;
@@ -272,7 +273,6 @@ export default {
                 }
                 .item-img:hover img{
                     transform: scale(1.1);
-                    transition: all .3s ease-out;
                 }
             }
         }

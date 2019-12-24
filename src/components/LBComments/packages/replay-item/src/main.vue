@@ -29,7 +29,7 @@
                                 <i class="iconfont iconfont-btn reply-btn">&#xe616;</i>
                                 <span class="iconfont-text">{{ isShowInput ? '取消回复' : '回复' }}</span>
                             </div>
-                            <div class="report-btn" @click="handleReportComment" v-if="!comment.is_deleted && comment.commentator !== currentUser">
+                            <div class="report-btn" @click="handleReportComment" v-if="!comment.is_deleted && comment.from !== currentUser">
                                 <i class="iconfont iconfont-btn report-icon">&#xe656;</i>
                                 <span class="iconfont-text">举报</span>
                             </div>
