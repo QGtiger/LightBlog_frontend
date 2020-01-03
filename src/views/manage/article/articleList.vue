@@ -67,11 +67,21 @@
                 :index="indexMethod"
                 
                ></el-table-column>
-               <el-table-column label="文章标题" prop="title"></el-table-column>
-               <el-table-column label="文章简介" prop="description"></el-table-column>
-               <el-table-column label="所属专栏" prop="specialColumn"></el-table-column>
-               <el-table-column label="所属专题" prop="specialTheme"></el-table-column>
-               <el-table-column label="所属个人栏目" prop="personalColumn"></el-table-column>
+               <el-table-column label="文章标题" width="120">
+                   <template v-slot="scope">
+                       <div>
+                           <p :title="scope.row.title" class="line-clamp">{{ scope.row.title }}</p>
+                       </div>
+                   </template>
+               </el-table-column>
+               <el-table-column label="文章简介" width="120">
+                   <template v-slot="scope">
+                       <p :title="scope.row.description" class="line-clamp">{{ scope.row.description }}</p>
+                   </template>
+               </el-table-column>
+               <el-table-column label="所属专栏" prop="specialColumn" width="100"></el-table-column>
+               <el-table-column label="所属专题" prop="specialTheme" width="100"></el-table-column>
+               <el-table-column label="所属个人栏目" prop="personalColumn" width="100"></el-table-column>
                <el-table-column label="创建时间">
                    <template slot-scope="scope">{{ $util.Time.getAllTime(scope.row.created) }}</template>
                </el-table-column>

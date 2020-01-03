@@ -134,8 +134,5 @@ export default {
     font-family: cursive;
 }
 
-.report-dialog{
-    
-}
 
 </style>
