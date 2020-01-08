@@ -2,14 +2,13 @@
 <template>
    <div class='parent-comment' @mouseenter="handleMouseOver" @mouseleave="handleMouseOut">
        <div class="comment-avator">
-           <a :href="'/author/detail?user='+comment.commentator" target="_blank">
-                <img :src="comment.commentator_img_url" alt="try">
-           </a>
+           <router-link :to="{path: '/author/detail', query: {user: comment.commentator}}">
+           <img :src="comment.commentator_img_url" alt="try"></router-link>
        </div>
        <div class="comment-cont">
            <div class="comment-info">
                <div class="commentator">
-                   <a :href="'/author/detail?user='+comment.commentator" target="_blank">{{ comment.commentator }}</a>
+                   <router-link :to="{path:'/author/detail', query:{user: comment.commentator}}">{{ comment.commentator }}</router-link>
                </div>
                <div class="comment-time">
                    <span class="tips">{{ $util.Time.getFormatTime(comment.created) }}</span>

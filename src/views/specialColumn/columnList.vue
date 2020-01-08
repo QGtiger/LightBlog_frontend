@@ -18,18 +18,20 @@
                             </svg>
                         </span>
                        <div class="item-thumb">
-                           <a :href="'/theme/list?id='+item.id" target="_blank">
-                               <img :src="item.preview" alt="null">
-                           </a>
+                           <router-link :to="{path:'/theme/list',query:{id:item.id}}">
+                            <img :src="item.preview" alt="null">
+                           </router-link>
                        </div>
                        <div class="item-cont">
                            <div class="item-title">
-                               <p><a :href="'/theme/list?id='+item.id" target="_blank">{{ item.specialColumn }}</a></p>
+                               <p>
+                                   <router-link :to="{path:'/theme/list',query:{id:item.id}}">{{ item.specialColumn }}</router-link>
+                                </p>
                            </div>
                            <div class="item-desc">
                                <p>{{ item.description }}</p>
                            </div>
-                           <a :href="'/theme/list?id='+item.id" target="_blank" class="item-more">进入专栏 >></a>
+                           <router-link :to="{path:'/theme/list',query:{id:item.id}}" class="item-more">进入专栏 >></router-link>
                        </div>
                    </div>
                </el-col>

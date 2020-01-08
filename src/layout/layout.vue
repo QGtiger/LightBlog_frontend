@@ -53,7 +53,7 @@ export default {
 
 .music-plug{
   position: fixed;
-  top: 140px;
+  bottom: 140px;
   right: 20px;
 }
 

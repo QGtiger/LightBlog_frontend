@@ -17,15 +17,15 @@
                    <div class="theme-item">
                        <div class="item-top">
                            <div class="item-thumb">
-                                <a :href="'/theme/blog/'+item.specialThemeId" target="_blank">
-                                    <img :src="item.preview" alt="null">
-                                </a>
+                               <router-link :to="{path:'/theme/blog/'+item.specialThemeId}">
+                                <img :src="item.preview" alt="null">
+                               </router-link>
                             </div>
                             <div class="item-cont">
                                 <div class="item-title">
-                                    <a :href="'/theme/blog/'+item.specialThemeId" target="_blank">
+                                    <router-link :to="{path:'/theme/blog/'+item.specialThemeId}">
                                         <p>{{ item.specialTheme }}</p>
-                                    </a>
+                                    </router-link>
                                     <!-- <p>{{ item.specialTheme }}</p> -->
                                 </div>
                                 <div class="item-desc">

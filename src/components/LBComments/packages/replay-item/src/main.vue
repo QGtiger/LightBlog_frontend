@@ -2,16 +2,17 @@
 <template>
    <div class='child-comment' @mouseenter="handleMouseOver" @mouseleave="handleMouseOut">
        <div class="comment-avator">
-           <a :href="'/author/detail?user='+comment.from" target="_blank">
-                <img :src="comment.from_img_url" alt="try">
-           </a>
+           <router-link :to="{path:'/author/detail', query:{user: comment.from}}">
+            <img :src="comment.from_img_url" alt="try">
+           </router-link>
        </div>
        <div class="comment-cont">
            <div class="comment-info">
                <div class="commentator">
-                   <a :href="'/author/detail?user='+comment.from" target="_blank">{{ comment.from }}</a>
+                   <router-link :to="{path:'/author/detail', query:{user: comment.from}}">{{ comment.from }}</router-link>
+                   <!-- <a :href="'/author/detail?user='+comment.from" target="_blank">{{ comment.from }}</a> -->
                    <span class="tips-word">回复</span>
-                   <a :href="'/author/detail?user='+comment.to" target="_blank">{{ comment.to }}</a>
+                   <router-link :to="{path:'/author/detail', query:{user: comment.to}}">{{ comment.to }}</router-link>
                </div>
                <div class="comment-time">
                    <span class="tips">{{ $util.Time.getFormatTime(comment.created) }}</span>
