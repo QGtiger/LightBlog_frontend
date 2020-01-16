@@ -34,8 +34,9 @@
                     <div class="list-group" v-for="(item, index) in flowBlog" :key="index" >
                             <CardBlog :blog="item"></CardBlog>
                     </div>
-                            <p class="waiting" v-if="waiting">努力加载中...</p>
+                            <!-- <p class="waiting" >努力加载中...</p> -->
                             <p class="nomore" v-if="waiting === false">没有更多了...</p>
+                            <LBLoading v-if="waiting"></LBLoading>
                 </div>
                 <div class="fix-div">
                     <div class="hotest-blog">
@@ -65,10 +66,12 @@
 <script>
 import {getBlogs} from '@/api/blog';
 import CardBlog from '@/components/blog/CardBlog';
+import LBLoading from '@/components/LBLoad/main';
 
 export default {
     components: {
-        CardBlog
+        CardBlog,
+        LBLoading
     },
     data() {
         return {
