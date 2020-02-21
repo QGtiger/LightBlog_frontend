@@ -61,6 +61,7 @@ export default {
                 if(res){
                     this.$store.commit('setUserName', res.data.username);
                     this.$store.commit('setAvatorUrl', res.data.avator);
+                    this.$store.commit('setIsAdmin', res.data.isAdmin);
                     Cookie.set('userName', res.data.username);
                 }
             })

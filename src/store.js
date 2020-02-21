@@ -7,6 +7,7 @@ export default new Vuex.Store({
   state: {
     username: '',
     avatorUrl: '',
+    isAdmin: false,
   },
   mutations: {
     setUserName(state, username){
@@ -14,6 +15,9 @@ export default new Vuex.Store({
     },
     setAvatorUrl(state, url){
       state.avatorUrl = url;
+    },
+    setIsAdmin(state,isadmin){
+      state.isAdmin = isadmin;
     }
   },
   actions: {

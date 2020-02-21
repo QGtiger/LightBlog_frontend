@@ -4,7 +4,7 @@
     <el-menu
       class="el-menu-vertical"
       >
-      <el-submenu index="4">
+      <el-submenu index="4" v-if="isAdmin">
         <template slot="title">
           <i class="iconfont">&#xe856;</i>
           <span>用户管理</span>
@@ -16,7 +16,7 @@
             <el-menu-item><i class="el-icon-edit"></i> 回复模板</el-menu-item>
           </router-link>
       </el-submenu>
-      <el-submenu index="1">
+      <el-submenu index="1" v-if="isAdmin">
         <template slot="title">
           <i class="iconfont">&#xe856;</i>
           <span>审核管理</span>
@@ -28,7 +28,7 @@
             <el-menu-item><i class="el-icon-edit"></i>回复模板</el-menu-item>
           </router-link>
       </el-submenu>
-      <el-submenu index="2">
+      <el-submenu index="2" v-if="isAdmin">
         <template slot="title">
           <i class="iconfont">&#xe830;</i>
           <span>文章管理</span>
@@ -40,7 +40,7 @@
             <el-menu-item><i class="iconfont">&#xe834;</i> 专题管理</el-menu-item>
           </router-link>          
       </el-submenu>
-      <el-submenu index="3">
+      <el-submenu index="3" v-if="isAdmin">
         <template slot="title">
           <i class="iconfont">&#xe656;</i>
           <span> 举报管理</span>
@@ -55,7 +55,7 @@
             <el-menu-item><i class="iconfont">&#xe609;</i> 评论检举</el-menu-item>
           </router-link>          
       </el-submenu>
-      <router-link to="/banner/index">
+      <router-link to="/banner/index" v-if="isAdmin">
         <el-menu-item>
           <i class="el-icon-tickets"></i>
           <span slot="title"> 走马灯管理</span>
@@ -87,7 +87,8 @@ export default {
   data() {
     return {
       defaultOpeneds: [],
-      activeIndex: ""
+      activeIndex: "",
+      isAdmin: this.$store.state.isAdmin,
     };
   },
   mounted() {
