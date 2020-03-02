@@ -7,22 +7,17 @@
        <div class="body-cont">
            <AppMain></AppMain>
        </div>
-       <div class="music-plug">
-         <MusicBox></MusicBox>
-       </div>
    </div>
 </template>
 
 <script>
 import AppMain from './component/appMain.vue';
 import NavMenu from './component/NavMenu';
-import MusicBox from '@/components/musicBox/main';
 
 export default {
     components: {
         AppMain,
         NavMenu,
-        MusicBox
     },
     data() {
     return {
@@ -51,14 +46,9 @@ export default {
   src: url('../assets/font/GoodVibrationsROB Script.ttf');
 }
 
-.music-plug{
-  position: fixed;
-  bottom: 140px;
-  right: 20px;
-}
 
 .body-cont{
-  margin-bottom: 40px;
+  height: calc(100% - 61px);
 }
 
 

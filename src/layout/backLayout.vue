@@ -66,6 +66,7 @@ html,body{
 
 #app .wrap{
     height: 100%;
+    overflow-y: auto;
 }
 .body-cont .nav{
     float: left;

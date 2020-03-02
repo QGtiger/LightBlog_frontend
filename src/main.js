@@ -42,6 +42,8 @@ Vue.prototype.$Vue = Vue;
 
 Vue.config.productionTip = false
 
+console.log(this)
+
 router.beforeEach((to, from, next)=>{
   let isLogin = !!localStorage.token
   if (to.path === '/login' || to.path === '/register' || to.path === '/welcome') {
@@ -54,7 +56,31 @@ router.beforeEach((to, from, next)=>{
 })
 
 router.afterEach((to, from, next)=>{
-  window.scrollTo(0,0);
+  let dom = document.getElementsByClassName('wrap')[0];
+  if(dom) dom.scrollTop = 0;
+})
+
+Vue.directive('clickoutside', {
+  bind: function(el, binding, vnode){
+      function documentHandler(e){
+          if(el.contains(e.target)){
+              return false;
+          }
+          if(binding.expression){
+              // binding.value 执行上下文
+              if(typeof binding.value === 'function'){
+                binding.value(e)
+              }
+              
+          }
+      }
+      el.__vueClickOutside__ = documentHandler;
+      document.addEventListener('click', documentHandler);
+  },
+  unbind: function(){
+      document.removeEventListener('click', el.__vueClickOutside__);
+      delete el.__vueClickOutside__;
+  }
 })
 
 new Vue({

@@ -89,7 +89,7 @@ export default {
     computed: {},
     watch: {},
     mounted() {
-        window.addEventListener('scroll', this.handleScroll)
+        document.getElementsByClassName('wrap')[0].addEventListener('scroll', this.handleScroll)
         this.handleGetRecommendBlogs();
         this.handleGetMostViews();
         this.handleGetSpecialColumn();
@@ -126,7 +126,8 @@ export default {
                 clearTimeout(this.timeout);
             }
             this.timeout = setTimeout(()=>{
-                let bottomOfWindow = document.documentElement.scrollHeight - document.documentElement.scrollTop - document.documentElement.offsetHeight;
+                let scrollElement = document.getElementsByClassName('wrap')[0];
+                let bottomOfWindow = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.offsetHeight;
                 if(bottomOfWindow < 20){
                     if(this.currentPage < this.totalPage){
                         this.waiting = true;
@@ -170,7 +171,7 @@ export default {
         
     },
     beforeRouteLeave(to,from,next){
-        window.removeEventListener('scroll',this.handleScroll);
+        document.getElementsByClassName('wrap')[0].removeEventListener('scroll',this.handleScroll);
         next();
     }
 }

@@ -35,7 +35,7 @@
         @current-change="handleCommentPage"
         :page-size="size"
         :total="total"
-        layout="total, prev, pager, next"
+        layout=" prev, pager, next"
         ></el-pagination>
         <report-dialog :showDialog="showDialog"
             @cancel-edit="handleCancelReport"

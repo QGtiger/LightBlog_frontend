@@ -1,15 +1,29 @@
 <template>
   <div id="app" v-cloak>
       <router-view></router-view>
+
+       <div class="music-zhaocaimao" :class="showMusicBox ? 'show-iconzhaocaimao':''" @click="handleShowMusicBox">
+         <svg class="icon" style="font-size: 50px" aria-hidden="true">
+            <use xlink:href="#iconzhaocaimao"></use>
+        </svg>
+       </div>
+       <div class="music-plug" :class="showMusicBox ? 'show-musicbox' : ''">
+         <MusicBox></MusicBox>
+       </div>
   </div>
 </template>
 
 <script>
+import MusicBox from '@/components/musicBox/main';
 export default {
-  components: {},
+  components: {
+    MusicBox
+  },
   data() {
     return {
       currentTitle: '',
+
+      showMusicBox: false,
     }
   },
   mounted() {
@@ -17,6 +31,9 @@ export default {
     // console.log(this.$route.meta.title);
   },
   methods: {
+    handleShowMusicBox() {
+      this.showMusicBox = !this.showMusicBox;
+    },
     setPageListen() {
       let _this = this;
       // js判断浏览当前页（关键词：当前，浏览）
@@ -49,6 +66,48 @@ export default {
 *{
   padding:0;
   margin: 0;
+}
+
+.color-red{
+  color: red !important;
+}
+
+.color-bf0000{
+  color: #bf0000 !important;
+}
+
+.color-67c23a{
+  color: #67c23a !important;
+}
+
+.music-zhaocaimao{
+  position: fixed;
+    right: 0;
+    top: 200px;
+    transform: translate(50%, 50%) rotate(-45deg);
+    cursor: pointer;
+    z-index: 1021301230;
+    transition: all .3s ease;
+    transform-origin: top left;
+}
+.music-zhaocaimao:hover{
+  transform: rotate(-30deg)
+}
+.show-iconzhaocaimao{
+  transform: rotate(0);
+}
+.music-plug{
+  position: fixed;
+  top: 240px;
+  right: 10px;
+  z-index: 2030;
+  transition: all .3s ease;
+  transform: translateX(80%) scale(.5);
+  opacity: 0;
+}
+.show-musicbox{
+  opacity: 1;
+  transform: translateX(0) scale(1);
 }
 
 [v-cloak]{ display:none}

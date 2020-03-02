@@ -129,7 +129,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="comment-pagination-cont">
+                <div class="comment-pagination-cont" ref="commentPagination">
                     <lb-comments
                         :currentUser="this.$store.state.username"
                         :commentsList="commentsList"
@@ -139,8 +139,58 @@
                         @pageChange="handleChangeCommentPage"
                         ></lb-comments>
                 </div>
+
+                <div class="fixed-bottom">
+                    <div class="main-cont">
+                        <div class="comment-textarea">
+                            <textarea class="bottom-comment-textarea " ref="bottomTexteara" v-model="initCommentBottom" :class="focusTextarea ? 'focus-textarea' : ''"  @focus="handleFocusBottomTextarea"></textarea>
+                            <transition name="fade">
+                                <div class="right-meta" v-show="focusTextarea">
+                                    <i style="margin-right: 10px;padding: 4px;font-size: 20px;float:left; display: inline-block;cursor:pointer;" class="iconfont" @click="handleShowSelectEmoji">&#xe745;</i>
+                                    <div style="margin-top:4px"> 
+                                    <span class="confirm-comment" :class="{ confirm_hover :  initCommentBottom != ''}" @click="handleConfirmBottomComment">确认</span>
+                                        <span class="cancel-comment" @click="handleCancelBottomCommment">取消</span>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
+                        <div class="comment-num bottom-icon" @click="handleScrollToComment">
+                            <i class="iconfont commentIcon">&#xe60c;</i>
+                            <div class="comment-num num">{{ handleNumToThousands(commentExtra.comments_count) }}</div>
+                        </div>
+                        <div class="comment-like bottom-icon" @click="handleBlogLike" :class="is_like ? 'color-red' : ''">
+                            <i class="iconfont thumb-btn">&#xe600;</i>
+                            <div class="num">{{handleNumToThousands(like_count)}}</div>
+                        </div>
+                        <div class="comment-like bottom-icon" @click="handleBlogDisLike" :class="is_dislike ? 'color-67c23a' : ''">
+                            <i class="iconfont thumb-btn" style="transform: rotate(180deg)">&#xe600;</i>
+                            <div class="num">{{handleNumToThousands(dislike_count)}}</div>
+                        </div>
+                        <div class="bottom-icon" style="cursor: pointer" @click.stop>
+                            <i class="iconfont" style="font-size: 20px" @click="handleShowMoreMenu" >&#xe865;</i>
+                            <transition name="slide-bottom-fade">
+                                <div class="more-menu" v-show="isShowMoreMenu">
+                                    <ul>
+                                        <li @click="handleCollect">{{ is_collected ? '移出收藏夹' : '收藏文章' }}</li>
+                                        <li>举报文章</li>
+                                    </ul>
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+                </div>
             </div>
        </div>
+       <transition name="el-fade-in-linear" mode="">
+            <div class="emoji-box-fixed" :style="{ left: emojiClientX + 'px', top: emojiClientY  + 'px'}" v-if="absoluteEmoji" >
+                <i class="iconfont cancel-btn" @click="absoluteEmoji = false">&#xe63a;</i>
+            
+                <vue-emoji
+                @select="selectBottomEmoji">
+                </vue-emoji>
+            <span class="pop-arrow arrow"></span>
+            </div>       
+        </transition>
    </div>
 </template>
 
@@ -148,6 +198,7 @@
 import qs from 'qs';
 import vueEmoji from '@/components/emoji/emoji.vue';
 import  Velocity from 'velocity-animate';
+import { scrollTo } from '@/utils/scrollTo.js';
 
 export default {
     components: {
@@ -171,15 +222,40 @@ export default {
             commentsList: [], //评论列表
 
             commentExtra: {}, //评论 extra
+            focusTextarea: false, //bottom textarea是否focus
+
+            bottomCommentText: '',
+
+            absoluteEmoji: false,
+            emojiClientX: 0,
+            emojiClientY: 0,
+
+            is_like: false,
+            like_count: 0,
+            is_dislike: false,
+            dislike_count: 0,
+
+            isShowMoreMenu: false,
+
+            is_collected: false, //是否收藏
         };
     },
-    computed: {},
-    watch: {
-        '$route' (to, from) {
-            if(to.params.id != from.params.id){
-                this.blogId = to.params.id;
-                this.init();
+    computed: {
+        initCommentBottom: {
+            get: function () {
+                return this.bottomCommentText.replace(/(^\s*)|(\s*$)/g, '');
+            },
+            set: function(value){
+                this.bottomCommentText = value;
             }
+        }
+    },
+    watch: {
+        blogId() {
+            document.body.removeEventListener('click', this.handleHiddenMoreMenu, false); //error
+        },
+        '$route.params'(to, from){
+            console.log('watch route')
         }
     },
     mounted() {
@@ -196,6 +272,72 @@ export default {
         this.handleCommentExtra();
     },
     methods: {
+        handleCollect() {
+            this.$axios.post('/article/api/blog/collect',
+                this.$qs.stringify({
+                    id: this.blogId,
+                    action: this.is_collected ? 'not-collect': 'collect'
+                })
+            ).then(res=>{
+                    if(res){
+                        this.is_collected = !this.is_collected;
+                        this.$message.closeAll()
+                        this.$message.success(res.data.tips)
+                    }
+                })
+        },
+        handleShowMoreMenu() {
+            this.isShowMoreMenu = !this.isShowMoreMenu;
+        },
+        handleBlogLike() { //文章点赞
+            this.$axios.post('/article/api/blog/like',
+                this.$qs.stringify({
+                    id: this.blogId,
+                    action: 'like'
+                })
+            ).then(res=>{
+                if(res.data.success){
+                    this.$message.closeAll();
+                    this.$message.success(res.data.tips);
+                    this.is_like = res.data.is_like;
+                    this.like_count = res.data.like_count;
+                    // this.is_dislike = res.data.is_dislike;
+                    // this.dislike_count = res.data.dislike_count;
+                }
+            })
+        },
+        handleBlogDisLike() { //caicai 文章
+            this.$axios.post('/article/api/blog/like',
+                this.$qs.stringify({
+                    id: this.blogId,
+                    action: 'dislike'
+                })
+            ).then(res=>{
+                if(res.data.success){
+                    this.$message.closeAll();
+                    this.$message.success(res.data.tips);
+                    this.is_dislike = res.data.is_dislike;
+                    this.dislike_count = res.data.dislike_count;
+                }
+            })
+        },
+        handleTest() {
+            console.log(123)
+        },
+        handleScrollToComment() {
+            scrollTo(document.getElementsByClassName('wrap')[0],this.$refs.commentPagination)
+            // document.getElementsByClassName('wrap')[0].scrollTop = this.$refs.commentPagination.offsetTop;
+        },
+        handleCancelBottomCommment() {
+            this.initCommentBottom = '';
+            this.focusTextarea = false;
+        },
+        handleShowSelectEmoji(e) {
+            this.emojiClientX = e.clientX - 200;
+            this.emojiClientY = e.clientY - 230;
+            this.absoluteEmoji = true;
+            console.log(this.emojiClientX)
+        },
         handleCommentExtra(){
             this.$axios.post('/comment/api/comment/extra',
                 this.$qs.stringify({
@@ -232,13 +374,17 @@ export default {
             ).then(res => {
                 if(res){
                     this.blogInfo = res.data.data;
+                    this.is_like = res.data.is_like;
+                    this.is_dislike = res.data.is_dislike;
+                    this.like_count = res.data.data.usersLike;
+                    this.dislike_count = res.data.data.usersDisLike;
+                    this.is_collected = res.data.is_collected,
                     this.body = res.data.data.body
                     this.isFollow = res.data.is_follow;
                 }
             })
         },
         handleJumpBlogDetail(id) { //跳转到文章详情
-            console.log(id)
             this.$router.push("/blog/" + id);
         },
         handleJumpAuthorDetail(username){
@@ -294,6 +440,13 @@ export default {
             this.commentText = strList.join('');
             this.showEmoji = false;
         },
+        selectBottomEmoji(code) {
+            let strList = this.initCommentBottom.split('');
+            let selectionStart = this.$refs.bottomTexteara.selectionStart;
+            strList.splice(selectionStart, 0, code);
+            this.initCommentBottom = strList.join('');
+            this.absoluteEmoji = false;
+        },
         handleConfirmComment() {
             if(this.commentText.replace(/(^\s*) | (\s*$)/g, '').length === 0){
                 this.$message.warning('评论内容不能为空');
@@ -313,6 +466,30 @@ export default {
                         comment_reply: []
                     })
                     this.handleCancelComment();
+                }
+            })
+        },
+        handleConfirmBottomComment() {
+            if(this.initCommentBottom.replace(/(^\s*) | (\s*$)/g, '').length === 0){
+                this.$message.warning('评论内容不能为空');
+                return;
+            }
+            this.$axios.post('/comment/api/comment/post', 
+                this.$qs.stringify({
+                    blogId: this.blogId,
+                    commentatorName: this.$store.state.username,
+                    commentText: this.initCommentBottom
+                })
+            ).then(res=>{
+                if(res){
+                    this.$message.success('感谢你的评论');
+                    this.commentsList.unshift({
+                        comment_root: res.data.data,
+                        comment_reply: []
+                    })
+                    this.focusTextarea = false;
+                    this.initCommentBottom = '';
+                    this.absoluteEmoji = false;
                 }
             })
         },
@@ -344,10 +521,39 @@ export default {
                     { complete: done }
                 )
             }, delay)
+        },
+        handleFocusBottomTextarea() {
+            this.focusTextarea = true;
+        },
+        handleBlurBottomTextarea() {
+            this.focusTextarea = false;
+        },
+        handleHiddenMoreMenu() {
+            console.log('clickout moremenu')
+            this.isShowMoreMenu = false;
+            document.body.removeEventListener('click', this.handleHiddenMoreMenu, false)
+        },
+        handlePreventDefault(e) {
+            e.preventDefault();
         }
     },
     created() {
 
+    },
+    beforeUpdate() {
+        document.body.removeEventListener('click', this.handleHiddenMoreMenu, false);
+    },
+    updated() {
+        if(this.isShowMoreMenu){
+            document.body.addEventListener('click', this.handleHiddenMoreMenu, false)
+        }else{
+            document.body.removeEventListener('click', this.handleHiddenMoreMenu, false)
+        }
+    },
+    beforeRouteLeave(to, from, next) {
+        console.log('beforeRouteLeave')
+        document.body.removeEventListener('click', this.handleHiddenMoreMenu, false);
+        next();
     },
     activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
@@ -360,13 +566,195 @@ export default {
     }
 }
 
+.slide-bottom-fade-enter-active, .slide-bottom-fade-leave-active{
+    transition: all .3s ease;
+}
+
+.slide-bottom-fade-enter, .slide-bottom-fade-leave-to{
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+.emoji-box-fixed{
+    z-index: 30030;
+    position: fixed;
+    top: 0;
+    box-shadow: 0 4px 20px 1px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    .cancel-btn{
+        position: absolute;
+        top:5px;
+        right: 5px;
+        color: red;
+        padding: 4px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all .3s ease;
+    }
+    .cancel-btn:hover{
+        background-color: #ccc;
+    }
+}
+
 .fixed-css{
     position: fixed;
     top: 10px;
     right: 10%;
 }
 
+.fade-enter-active, .fade-leave-active{
+    transition: opacity .3s ease;
+}
+
+.fade-enter, .fade-leave-to{
+    opacity: 0;
+}
+
+.cancel-comment{
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #a1a1a1;
+    background-color: #eee;
+    cursor: pointer;
+    outline: none;
+    transition: all .4s;
+}
+.cancel-comment:hover{
+    background-color: #ccc;
+    color: #303133;
+    transition: all .4s;
+}
+.confirm-comment{
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: 1px solid #f56c6c73;
+    color: #f5f7fa;
+    background-color: #f56c6ccc;
+    cursor: not-allowed;
+    outline: none;
+    margin-right: 10px;
+    transition: all .4s;
+}
+.confirm_hover{
+    cursor: pointer;
+}
+.confirm_hover:hover{
+    background-color: #f56c6c;
+    transition: all .4s;
+}
+
+.fixed-bottom{
+    position: fixed;
+    padding: 8px 0;
+    width: 100%;
+    background-color: #fff;
+    bottom: 0;
+    left: 0;
+    z-index: 2020;
+    border-top: 1px solid #ccc;
+    box-shadow: 0px 0px 12px #b3a7a7;
+    .main-cont{
+        margin-left: calc(10% - 25px);
+        display: flex;
+        align-items: center;
+        .more-menu-show{
+            top: -63px !important;
+            opacity: 1 !important;
+        }
+        .more-menu{
+            position: absolute;
+            font-size: 14px;
+            top: -63px;
+            width: 100px;
+            background-color: #fff;
+            color: #808080;
+            z-index: 3030;
+            -webkit-box-shadow: 2px 0 6px #ccc;
+            box-shadow: 2px 0 6px #ccc;
+            border-radius: 3px;
+            left: calc(50% - 50px);
+            ul{
+                list-style: none;
+                li{
+                    text-align: left;
+                    padding: 2px 0 2px 15px;
+                }
+            }
+        }
+        .more-menu::after{
+            content: '';
+            display: block;
+            width: 0px;
+            height: 0px;
+            position: absolute;
+            border: 6px solid  transparent;
+            border-top: 6px solid #fff;
+            left: calc(50% - 3px)
+        }
+        .comment-num, .comment-like{
+            cursor: pointer;
+        }
+        .comment-textarea{
+            position:relative;
+            .right-meta{
+                font-size: 12px;
+                position: absolute;
+                top: 8px;
+                right: 3px;
+                width: 94px;
+                .cancel-comment{
+                    margin-top: 4px;
+                    padding: 3px 8px;
+                }
+                .confirm-comment{
+                    padding: 3px 8px;
+                }
+            }
+            .bottom-comment-textarea{
+                border: none;
+                padding: 10px 15px;
+                width: 300px;
+                height: 26px;
+                outline: none;
+                background-color: #eee;
+                border-radius: 10px;
+                transition: all .3s ease;
+            }
+            .focus-textarea{
+                height: 58px;
+                width: 350px;
+                padding-right: 100px;
+            }
+        }
+        .thumb-btn{
+            font-size: 28px;
+        }
+        .commentIcon{
+            font-size: 20px;
+            padding-top: 3px;
+        }
+        .bottom-icon{
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            color: #a1a1a1;
+            .num{
+                padding-top: 3px;
+            }
+            .comment-num{
+
+                padding-left: 5px;
+            }
+        }
+    }
+}
+
 .blog-detail{
+    margin-bottom: 100px;
     .blog-cont{
         width: 80%;
         min-width: 1000px;
@@ -456,41 +844,7 @@ export default {
                             display: flex;
                             align-items: center;
                             justify-content: space-between;
-                            .cancel-comment{
-                                display: inline-block;
-                                padding: 5px 15px;
-                                border-radius: 10px;
-                                border: 1px solid #ccc;
-                                color: #a1a1a1;
-                                background-color: #eee;
-                                cursor: pointer;
-                                outline: none;
-                                transition: all .4s;
-                            }
-                            .cancel-comment:hover{
-                                background-color: #ccc;
-                                color: #303133;
-                                transition: all .4s;
-                            }
-                            .confirm-comment{
-                                display: inline-block;
-                                padding: 5px 15px;
-                                border-radius: 10px;
-                                border: 1px solid #f56c6c73;
-                                color: #f5f7fa;
-                                background-color: #f56c6ccc;
-                                cursor: not-allowed;
-                                outline: none;
-                                margin-right: 10px;
-                                transition: all .4s;
-                            }
-                            .confirm_hover{
-                                cursor: pointer;
-                            }
-                            .confirm_hover:hover{
-                                background-color: #f56c6c;
-                                transition: all .4s;
-                            }
+                            
                         }
                     }
                     .emoji-box{

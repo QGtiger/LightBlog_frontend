@@ -240,6 +240,11 @@ export default new Router({
         name: 'detail',
         component: () => import('@/views/manage/article/articleDetail'),
         meta: { title: '文章详情' }
+      },{
+        path: 'collection',
+        name: 'collection',
+        component: () => import('@/views/collection/collection'),
+        meta: {title: '收藏夹管理'}
       }]
     },
     {

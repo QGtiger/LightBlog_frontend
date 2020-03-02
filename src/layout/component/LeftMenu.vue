@@ -76,7 +76,13 @@
       <el-menu-item>
         <i class="el-icon-upload"></i>
         <span slot="title"> 文章发布</span>
-      </el-menu-item>        
+      </el-menu-item>    
+      <router-link to="/article/collection">
+        <el-menu-item>
+        <i class="el-icon-s-management"></i>
+        <span slot="title">收藏夹管理</span>
+      </el-menu-item>   
+        </router-link>     
     </el-menu>
   </div>
 </template>

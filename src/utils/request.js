@@ -42,6 +42,7 @@ service.interceptors.response.use(
   response => {
     endLoading()
     if(response.data.status == 401){
+      // console.log(router)
       Message.error(response.data.tips)
       // 清除token
       localStorage.removeItem('token')
