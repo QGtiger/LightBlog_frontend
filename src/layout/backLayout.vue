@@ -18,6 +18,9 @@
             </div>
            
        </div>
+       <div class="LBFooter">
+           <p class="copyright" style="text-align:center;line-height: 40px;box-shadow: 0 0 8px #ccc;"><span style="margin-right: 10px;">© </span><span style="vertical-align: middle;"><i class="iconfont">&#xe85b;</i></span> <span style="margin-left: 10px;">Lightfish</span></p>
+       </div>
    </div>
 </template>
 
@@ -68,12 +71,15 @@ html,body{
     height: 100%;
     overflow-y: auto;
 }
-.body-cont .nav{
+.body-cont{
+    height: calc(100% - 101px);
+    .nav{
     float: left;
     width: 200px;
     height: 100%;
     overflow: hidden;
     border-right: solid 1px #e6e6e6;
+}
 }
 
 
@@ -85,6 +91,8 @@ html,body{
 
 .main-cont{
     padding: 0 30px;
+    height: 100%;
+    overflow: auto;
 }
 
 // .table {

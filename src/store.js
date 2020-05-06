@@ -8,19 +8,25 @@ export default new Vuex.Store({
     username: '',
     avatorUrl: '',
     isAdmin: false,
+    searchData: '',
+    searchHref: '',
   },
   mutations: {
-    setUserName(state, username){
-      state.username = username;
+    setUserName(state, username) {
+      state.username = username
     },
-    setAvatorUrl(state, url){
-      state.avatorUrl = url;
+    setAvatorUrl(state, url) {
+      state.avatorUrl = url
     },
-    setIsAdmin(state,isadmin){
-      state.isAdmin = isadmin;
-    }
+    setIsAdmin(state, isadmin) {
+      state.isAdmin = isadmin
+    },
+    setSearchData(state, searchData) {
+      state.searchData = searchData
+    },
+    setSearchHref(state, href) {
+      state.searchHref = href
+    },
   },
-  actions: {
-
-  }
+  actions: {},
 })
