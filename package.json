@@ -15,7 +15,7 @@
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.1",
     "mavon-editor": "^2.7.6",
-    "qs": "^6.7.0",
+    "qs": "^6.5.3",
     "velocity-animate": "^1.5.2",
     "vue": "^2.6.10",
     "vue-cropper": "^0.4.9",
